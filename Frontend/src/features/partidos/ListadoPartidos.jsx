@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { peticion } from '../../shared/api';
-import { Search, Plus, Trash2, Calendar, Trophy, ChevronLeft, ChevronRight, Zap, Edit3 } from 'lucide-react';
+import { Search, Plus, Trash2, Calendar, Trophy, ChevronLeft, ChevronRight, Zap, Edit3, Flame } from 'lucide-react';
 import FormularioPartidoModal from './FormularioPartidoModal';
 import ModalConfirmarBorrado from './ModalConfirmarBorrado';
+import SportTableBorder from '../../shared/SportTableBorder';
 
 export default function ListadoPartidos({ usuario, setModalLoginAbierto }) {
   const [partidos, setPartidos] = useState([]);
@@ -171,105 +172,121 @@ export default function ListadoPartidos({ usuario, setModalLoginAbierto }) {
           </div>
         </form>
 
-        {/* Tabla Paginada */}
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Deporte / Rama</th>
-                <th>Fecha</th>
-                <th>Encuentro</th>
-                <th style={{ textAlign: 'center' }}>Marcador</th>
-                <th>Ganador</th>
-                <th>Temporada</th>
-                {usuario.token && <th style={{ textAlign: 'right' }}>Acción</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {cargando ? (
+        {/* Tabla Paginada con Borde Temático de Balones de Voley y Básquetbol */}
+        <SportTableBorder
+          titulo="Duelo Oficial de Marcadores en Cancha"
+          subtitulo="Puntuación oficial auditada con borde perimetral de balones de básquetbol y voleibol"
+          badge="🏐 Duela & Red 🏀"
+        >
+          <div className="table-responsive">
+            <table className="table sport-table-animated">
+              <thead>
                 <tr>
-                  <td colSpan={usuario.token ? 8 : 7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                    Cargando partidos desde PostgreSQL...
-                  </td>
+                  <th>ID</th>
+                  <th>Deporte / Rama</th>
+                  <th>Fecha</th>
+                  <th>Encuentro en Cancha</th>
+                  <th style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>Marcador</th>
+                  <th>Ganador</th>
+                  <th>Temporada</th>
+                  {usuario.token && <th style={{ textAlign: 'right' }}>Acción</th>}
                 </tr>
-              ) : partidos.length === 0 ? (
-                <tr>
-                  <td colSpan={usuario.token ? 8 : 7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                    No se encontraron partidos con los filtros aplicados.
-                  </td>
-                </tr>
-              ) : (
-                partidos.map((p) => {
-                  const esBasket = p.deporte_codigo === 'BASKET';
-                  const esFem = p.categoria_nombre === 'Femenino';
-                  return (
-                    <tr key={p.id}>
-                      <td style={{ fontWeight: 600, color: '#64748b' }}>#{p.id}</td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-                          <span className={`badge ${esBasket ? 'badge-basket' : 'badge-voley'}`}>
-                            {p.deporte_nombre}
-                          </span>
-                          <span className={`badge ${esFem ? 'badge-fem' : 'badge-masc'}`}>
-                            {p.categoria_nombre}
-                          </span>
-                        </div>
-                      </td>
-                      <td>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: '#334155' }}>
-                          <Calendar size={13} color="#64748b" /> {p.fecha}
-                        </span>
-                      </td>
-                      <td>
-                        <strong style={{ color: p.puntos_local > p.puntos_visitante ? '#1e3a8a' : '#334155' }}>
-                          {p.equipo_local_nombre}
-                        </strong>
-                        <span style={{ color: '#94a3b8', margin: '0 0.35rem' }}>vs</span>
-                        <strong style={{ color: p.puntos_visitante > p.puntos_local ? '#1e3a8a' : '#334155' }}>
-                          {p.equipo_visitante_nombre}
-                        </strong>
-                      </td>
-                      <td style={{ textAlign: 'center', fontWeight: 800, fontSize: '1rem', color: '#0f172a' }}>
-                        {p.puntos_local} - {p.puntos_visitante}
-                      </td>
-                      <td>
-                        <span style={{ color: '#10b981', fontWeight: 700 }}>
-                          {p.ganador_nombre}
-                        </span>
-                      </td>
-                      <td style={{ color: '#64748b', fontSize: '0.85rem' }}>
-                        {p.temporada} (J{p.jornada})
-                      </td>
-                      {usuario.token && (
-                        <td style={{ textAlign: 'right' }}>
-                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.35rem' }}>
-                            <button
-                              className="btn btn-outline"
-                              style={{ color: '#2563eb', padding: '0.25rem 0.5rem' }}
-                              onClick={() => { setPartidoParaEditar(p); setModalCrearAbierto(true); }}
-                              title="Editar Partido"
-                            >
-                              <Edit3 size={15} />
-                            </button>
-                            <button
-                              className="btn btn-outline"
-                              style={{ color: '#e11d48', padding: '0.25rem 0.5rem' }}
-                              onClick={() => setPartidoAEliminar(p)}
-                              title="Eliminar con confirmación"
-                            >
-                              <Trash2 size={15} />
-                            </button>
+              </thead>
+              <tbody>
+                {cargando ? (
+                  <tr>
+                    <td colSpan={usuario.token ? 8 : 7} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.6rem' }}>
+                        <span className="ball-emoji-rotator">🏀</span>
+                        <span>Cargando partidos desde PostgreSQL...</span>
+                        <span className="ball-emoji-rotator">🏐</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : partidos.length === 0 ? (
+                  <tr>
+                    <td colSpan={usuario.token ? 8 : 7} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                      No se encontraron partidos con los filtros aplicados. ¡Crea uno con el botón superior!
+                    </td>
+                  </tr>
+                ) : (
+                  partidos.map((p) => {
+                    const esBasket = p.deporte_codigo === 'BASKET' || String(p.deporte_nombre).toLowerCase().includes('basket');
+                    const esFem = p.categoria_nombre === 'Femenino';
+                    return (
+                      <tr key={p.id} className={`sport-row ${esBasket ? 'row-basket' : 'row-voley'}`}>
+                        <td style={{ fontWeight: 700, color: '#475569' }}>
+                          <span className="id-badge-sport">#{p.id}</span>
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                            <span className={`badge ${esBasket ? 'badge-basket' : 'badge-voley'}`}>
+                              {esBasket ? '🏀 ' : '🏐 '} {p.deporte_nombre}
+                            </span>
+                            <span className={`badge ${esFem ? 'badge-fem' : 'badge-masc'}`}>
+                              {p.categoria_nombre}
+                            </span>
                           </div>
                         </td>
-                      )}
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                        <td>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#334155', whiteSpace: 'nowrap' }}>
+                            <Calendar size={13} color="#64748b" /> {p.fecha}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="matchup-cell">
+                            <strong className={p.puntos_local > p.puntos_visitante ? 'team-winner' : 'team-name'}>
+                              {p.equipo_local_nombre}
+                            </strong>
+                            <span className="vs-pill">vs</span>
+                            <strong className={p.puntos_visitante > p.puntos_local ? 'team-winner' : 'team-name'}>
+                              {p.equipo_visitante_nombre}
+                            </strong>
+                          </div>
+                        </td>
+                        <td style={{ textAlign: 'center', whiteSpace: 'nowrap', verticalAlign: 'middle' }}>
+                          <span className="led-scoreboard">
+                            <span>{p.puntos_local}</span>
+                            <span className="scoreboard-dash">-</span>
+                            <span>{p.puntos_visitante}</span>
+                          </span>
+                        </td>
+                        <td>
+                          <span className="winner-pill">
+                            🏆 {p.ganador_nombre}
+                          </span>
+                        </td>
+                        <td style={{ color: '#64748b', fontSize: '0.85rem' }}>
+                          {p.temporada} <span className="jornada-badge">J{p.jornada}</span>
+                        </td>
+                        {usuario.token && (
+                          <td style={{ textAlign: 'right' }}>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.35rem' }}>
+                              <button
+                                className="btn btn-outline btn-action-edit"
+                                onClick={() => { setPartidoParaEditar(p); setModalCrearAbierto(true); }}
+                                title="Editar Partido"
+                              >
+                                <Edit3 size={15} />
+                              </button>
+                              <button
+                                className="btn btn-outline btn-action-delete"
+                                onClick={() => setPartidoAEliminar(p)}
+                                title="Eliminar con confirmación"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </SportTableBorder>
 
         {/* Paginación */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '1rem' }}>

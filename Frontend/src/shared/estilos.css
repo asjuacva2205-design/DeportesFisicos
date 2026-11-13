@@ -428,3 +428,810 @@ body {
   max-height: 90vh;
   overflow-y: auto;
 }
+
+/* ============================================================ */
+/* CANCHA DIVIDIDA: MITAD VOLEIBOL & MITAD BÁSQUETBOL           */
+/* ============================================================ */
+.cancha-background-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cancha-svg-board {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.92;
+}
+
+.stadium-lighting-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.15) 0%, rgba(15, 23, 42, 0.45) 70%, rgba(15, 23, 42, 0.8) 100%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.court-frosted-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(248, 250, 252, 0.32);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+/* Balones flotantes en el fondo de la cancha */
+.floating-court-ball {
+  animation: floatCourtBall 6s ease-in-out infinite alternate;
+}
+.ball-voley-bg {
+  animation-delay: 0s;
+}
+.ball-basket-bg {
+  animation-delay: 3s;
+}
+@keyframes floatCourtBall {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(15deg); }
+  100% { transform: translateY(8px) rotate(-10deg); }
+}
+
+/* Mejoras de Tarjetas Glassmorphism sobre la Cancha */
+.card {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  padding: 1.6rem;
+  margin-bottom: 1.75rem;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -6px rgba(15, 23, 42, 0.18), 0 0 20px rgba(56, 189, 248, 0.12);
+}
+
+/* ============================================================ */
+/* TABLAS CON BORDEADO DE BALONES DE VOLEY Y BÁSQUETBOL        */
+/* ============================================================ */
+.sport-table-wrapper {
+  position: relative;
+  margin: 1.25rem 0;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.15), 0 0 0 2px #e2e8f0;
+  overflow: visible;
+  padding: 6px;
+}
+
+/* Borde con gradiente neón de vóley (azul) a básquet (naranja fuego) */
+.sport-table-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 30%, #f97316 70%, #ea580c 100%);
+  z-index: -1;
+  animation: borderGlowPulse 4s ease infinite alternate;
+}
+
+@keyframes borderGlowPulse {
+  0% { filter: drop-shadow(0 0 6px rgba(2, 132, 199, 0.45)); }
+  100% { filter: drop-shadow(0 0 10px rgba(234, 88, 12, 0.55)); }
+}
+
+/* Esquinas con balones */
+.corner-sport-ball {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.corner-sport-ball:hover {
+  transform: scale(1.3) rotate(360deg);
+}
+.corner-top-left { top: -14px; left: -14px; border: 2px solid #ea580c; }
+.corner-top-right { top: -14px; right: -14px; border: 2px solid #0284c7; }
+.corner-bottom-left { bottom: -14px; left: -14px; border: 2px solid #0284c7; }
+.corner-bottom-right { bottom: -14px; right: -14px; border: 2px solid #ea580c; }
+
+/* Cenefas superior e inferior de balones */
+.sport-ball-border-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.35rem 0.5rem;
+  background: linear-gradient(90deg, #eff6ff 0%, #fff7ed 50%, #eff6ff 100%);
+  border-radius: 10px;
+  user-select: none;
+}
+.strip-top { margin-bottom: 0.5rem; border-bottom: 1px dashed #cbd5e1; }
+.strip-bottom { margin-top: 0.5rem; border-top: 1px dashed #cbd5e1; }
+
+.ball-stream {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.ball-pip {
+  font-size: 1.15rem;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+.ball-pip:hover {
+  transform: scale(1.4) translateY(-3px);
+}
+
+.ball-emoji-rotator {
+  display: inline-block;
+  animation: ballSpinSlow 8s linear infinite;
+}
+@keyframes ballSpinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sport-table-inner {
+  padding: 0.5rem 0.75rem;
+}
+.sport-table-headline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+.sport-table-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+.sport-table-subtitle {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+.sport-table-badge {
+  background: linear-gradient(135deg, #0284c7, #ea580c);
+  color: white;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Filas de la tabla con animación y hover deportivo */
+.sport-table-animated tr.sport-row {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+}
+.sport-table-animated tr.sport-row:hover {
+  transform: translateX(6px) scale(1.006);
+  background-color: #f8fafc;
+}
+.sport-table-animated tr.row-basket:hover {
+  box-shadow: inset 4px 0 0 #ea580c;
+  background-color: #fff7ed;
+}
+.sport-table-animated tr.row-voley:hover {
+  box-shadow: inset 4px 0 0 #0284c7;
+  background-color: #f0f9ff;
+}
+
+/* Elementos visuales de la tabla */
+.led-scoreboard {
+  background: #0f172a;
+  color: #38bdf8;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 900;
+  font-size: 1.05rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(56, 189, 248, 0.25);
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  vertical-align: middle;
+  min-width: 95px;
+}
+
+.scoreboard-dash {
+  color: #94a3b8;
+  margin: 0 0.15rem;
+  font-weight: 800;
+  user-select: none;
+}
+.id-badge-sport {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+.matchup-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.vs-pill {
+  background: #e2e8f0;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.team-name {
+  color: #334155;
+}
+.team-winner {
+  color: #0369a1;
+  font-weight: 800;
+}
+.winner-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #ecfdf5;
+  color: #059669;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid #a7f3d0;
+}
+.jornada-badge {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.btn-action-edit:hover {
+  background-color: #eff6ff !important;
+  border-color: #3b82f6 !important;
+  color: #1d4ed8 !important;
+}
+.btn-action-delete:hover {
+  background-color: #fef2f2 !important;
+  border-color: #ef4444 !important;
+  color: #b91c1c !important;
+}
+
+/* ============================================================ */
+/* JUGADORES EN LA CIMA DE LAS GRÁFICAS                        */
+/* ============================================================ */
+.card-with-athletes {
+  position: relative;
+  padding-top: 1rem;
+  overflow: visible;
+}
+.chart-athletes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  position: relative;
+}
+.athlete-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.athlete-svg {
+  width: 85px;
+  height: 95px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s;
+}
+.athlete-card:hover .athlete-svg {
+  transform: scale(1.1) translateY(-6px);
+}
+
+/* Animación de suspensión aérea */
+.athlete-voley-jump {
+  animation: athleteSpikeAir 3.5s ease-in-out infinite alternate;
+}
+.athlete-basket-dunk {
+  animation: athleteDunkAir 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes athleteSpikeAir {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(-3px); }
+}
+@keyframes athleteDunkAir {
+  0% { transform: translateY(-2px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.floating-athlete-ball {
+  animation: ballSpinGlow 2.5s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+@keyframes ballSpinGlow {
+  0% { transform: scale(1) translateY(0); }
+  100% { transform: scale(1.1) translateY(-4px); }
+}
+
+.athlete-info-tag {
+  display: flex;
+  flex-direction: column;
+}
+.tag-voley .athlete-name {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0284c7;
+}
+.tag-basket .athlete-name {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #ea580c;
+}
+.athlete-stat {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.athlete-net-center {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  margin: 0 1rem;
+  margin-bottom: 1.5rem;
+}
+.athlete-net-bar {
+  flex: 1;
+  height: 3px;
+  background: linear-gradient(90deg, #38bdf8, #f97316);
+  border-radius: 9999px;
+  opacity: 0.6;
+}
+.athlete-center-versus {
+  font-weight: 900;
+  font-size: 0.8rem;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* ============================================================ */
+/* ANIMACIÓN CHOQUE DE BALONES (SUPERBOLAS & VOLEY SMASH)       */
+/* ============================================================ */
+.clash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(10, 15, 30, 0.94);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: fadeInClash 0.3s ease-out forwards;
+}
+
+@keyframes fadeInClash {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.clash-screen-shake {
+  animation: cameraShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes cameraShake {
+  10%, 90% { transform: translate3d(-3px, 0, 0); }
+  20%, 80% { transform: translate3d(5px, -3px, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 4px, 0); }
+  40%, 60% { transform: translate3d(6px, -4px, 0); }
+}
+
+.clash-ambient-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(100px);
+  opacity: 0.5;
+}
+.glow-basket {
+  background: radial-gradient(circle, #ea580c 0%, #dc2626 50%, transparent 70%);
+}
+.glow-voley {
+  background: radial-gradient(circle, #0284c7 0%, #eab308 50%, transparent 70%);
+}
+
+.clash-stage {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clash-ball-wrapper {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 5;
+}
+
+/* Balón Izquierdo */
+.ball-left.inicio {
+  transform: translateX(-500px) rotate(-360deg);
+  opacity: 0;
+}
+.ball-left.aproximando {
+  transform: translateX(-60px) rotate(0deg);
+  opacity: 1;
+}
+.ball-left.impacto, .ball-left.celebracion {
+  transform: translateX(-40px) scale(0.9);
+}
+
+/* Balón Derecho */
+.ball-right.inicio {
+  transform: translateX(500px) rotate(360deg);
+  opacity: 0;
+}
+.ball-right.aproximando {
+  transform: translateX(60px) rotate(0deg);
+  opacity: 1;
+}
+.ball-right.impacto, .ball-right.celebracion {
+  transform: translateX(40px) scale(0.9);
+}
+
+/* Superbola de Básquetbol */
+.superbola-basket {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.superbola-basket .basketball-graphic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fb923c, #ea580c 60%, #7c2d12 100%);
+  border: 3px solid #451a03;
+  position: relative;
+  box-shadow: 0 0 35px #f97316, inset -10px -10px 20px #7c2d12;
+  overflow: hidden;
+  animation: ballSpinFast 0.8s linear infinite;
+}
+.superbola-basket .basket-seam {
+  position: absolute;
+  background: #451a03;
+}
+.superbola-basket .basket-seam.horizontal {
+  width: 100%;
+  height: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.superbola-basket .basket-seam.vertical {
+  height: 100%;
+  width: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.superbola-basket .basket-seam.curve-1 {
+  width: 90px;
+  height: 90px;
+  border: 3px solid #451a03;
+  border-radius: 50%;
+  top: 5px;
+  left: -35px;
+}
+.superbola-basket .basket-seam.curve-2 {
+  width: 90px;
+  height: 90px;
+  border: 3px solid #451a03;
+  border-radius: 50%;
+  top: 5px;
+  right: -35px;
+}
+
+/* Llamas y Fuego */
+.fire-aura {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #f97316;
+  animation: flameFlicker 0.25s infinite alternate;
+}
+@keyframes flameFlicker {
+  0% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 15px #ef4444); }
+  100% { transform: scale(1.15) rotate(2deg); filter: drop-shadow(0 0 25px #f59e0b); }
+}
+
+/* Balón de Voleibol */
+.volleyball-smash {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.volleyball-smash .voleyball-graphic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #0f172a;
+  position: relative;
+  box-shadow: 0 0 35px #38bdf8, inset -8px -8px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: ballSpinFast 0.8s linear infinite;
+}
+.voley-panel.blue-panel {
+  position: absolute;
+  width: 50px;
+  height: 100px;
+  background: #0284c7;
+  left: 0;
+  top: 0;
+  border-radius: 50% 0 0 50%;
+  opacity: 0.9;
+}
+.voley-panel.yellow-panel {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: #eab308;
+  right: 0;
+  bottom: 0;
+  opacity: 0.9;
+}
+.electric-aura {
+  position: absolute;
+  inset: -20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #38bdf8;
+  animation: electricFlicker 0.2s infinite alternate;
+}
+@keyframes electricFlicker {
+  0% { transform: scale(1); filter: drop-shadow(0 0 18px #38bdf8); }
+  100% { transform: scale(1.2); filter: drop-shadow(0 0 30px #facc15); }
+}
+
+@keyframes ballSpinFast {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Impacto Central y Ondas Expansivas */
+.clash-center-impact {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s ease-out;
+}
+.clash-center-impact.active {
+  opacity: 1;
+  transform: scale(1);
+}
+.shockwave-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+  opacity: 0;
+}
+.clash-center-impact.active .shockwave-ring.ring-1 {
+  animation: shockwaveExpand 0.8s ease-out forwards;
+}
+.clash-center-impact.active .shockwave-ring.ring-2 {
+  animation: shockwaveExpand 0.8s ease-out 0.15s forwards;
+}
+.clash-center-impact.active .shockwave-ring.ring-3 {
+  animation: shockwaveExpand 0.8s ease-out 0.3s forwards;
+}
+
+@keyframes shockwaveExpand {
+  0% { width: 20px; height: 20px; opacity: 1; border-color: #ffffff; }
+  50% { border-color: #f97316; }
+  100% { width: 380px; height: 380px; opacity: 0; border-color: #0284c7; }
+}
+
+.impact-symbol {
+  font-size: 3.5rem;
+  animation: boomPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  z-index: 20;
+}
+@keyframes boomPop {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.6); }
+  100% { transform: scale(1); }
+}
+
+.team-floating-tag {
+  background: rgba(15, 23, 42, 0.85);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Cartel Victorioso */
+.clash-title-banner {
+  margin-top: 1.5rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 20;
+}
+.clash-title-banner.banner-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.clash-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #f97316, #0284c7);
+  color: white;
+  font-weight: 800;
+  padding: 0.4rem 1.2rem;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  margin-bottom: 0.75rem;
+}
+.clash-main-text {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 4px 12px rgba(0, 0, 0, 0.8);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+.clash-subtext {
+  font-size: 1.05rem;
+  color: #cbd5e1;
+  margin-bottom: 1.25rem;
+}
+.btn-clash-continue {
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  color: white;
+  font-weight: 800;
+  padding: 0.75rem 2rem;
+  font-size: 1.05rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+  transition: all 0.2s;
+}
+.btn-clash-continue:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(56, 189, 248, 0.6);
+}
+
+/* Botones especiales del modal */
+.btn-sport-test {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-sport-test:hover {
+  background: #eff6ff;
+  border-color: #38bdf8;
+  color: #0284c7;
+  transform: translateY(-1px);
+}
+.btn-basket-clash {
+  background: linear-gradient(135deg, #ea580c, #c2410c);
+  color: white;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
+}
+.btn-basket-clash:hover {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  box-shadow: 0 6px 18px rgba(234, 88, 12, 0.5);
+}
+.btn-voley-clash {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: white;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+}
+.btn-voley-clash:hover {
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.5);
+}
+.modal-sport-header-bar {
+  background: #0f172a;
+  color: white;
+  padding: 0.35rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: 0.05em;
+}
+.court-indicator {
+  color: #38bdf8;
+  font-size: 0.7rem;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+}
+.footer-stadium {
+  background: #0f172a;
+  color: #94a3b8;
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.85rem;
+  border-top: 1px solid #1e293b;
+  position: relative;
+  z-index: 10;
+}
