@@ -1,0 +1,29 @@
+# Entornos virtuales y ejecutables locales
+Backend/venv/
+*.exe
+*.dll
+
+# Python y caché
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+
+# Variables de entorno sensibles (nunca subir claves)
+Backend/.env
+.env
+
+# Archivos estáticos generados en producción
+Backend/staticfiles/
+Frontend/dist/
+
+# Dependencias de Node
+Frontend/node_modules/
+
+# Logs del sistema y SO
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
