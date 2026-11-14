@@ -408,7 +408,7 @@ export default function PizarraTacticaSimulator() {
       </div>
 
       {/* Área Cancha y Radar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(340px, 1.45fr) minmax(300px, 1fr)', gap: '1.5rem', marginBottom: '1.5rem' }}>
+      <div className="tactical-board-grid">
         {/* Cancha Táctica */}
         <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#ffffff', borderRadius: '16px' }}>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
