@@ -1,20 +1,25 @@
-/* Variables globales de diseño deportivo elegante y sobrio */
+/* ==============================================================================
+   CanchaData — Estilos Deportivos Personalizados: Half-Court Theme & FX
+   ============================================================================== */
+
 :root {
-  --color-primary: #0f172a;        /* Azul pizarra oscuro / texto principal */
+  --color-primary: #0f172a;        /* Azul pizarra oscuro */
   --color-primary-hover: #1e293b;
   --color-accent: #2563eb;         /* Azul real profesional */
   --color-accent-hover: #1d4ed8;
   --color-secondary: #4f46e5;      /* Índigo elegante */
-  --color-bg: #f8fafc;             /* Fondo gris suave */
-  --color-card-bg: #ffffff;
+  --color-basket: #d97706;        /* Tono cuero balón de básquetbol */
+  --color-voley: #0284c7;         /* Tono azul cancha FIVB */
+  --color-bg: #f1f5f9;
+  --color-card-bg: rgba(255, 255, 255, 0.94);
   --color-text: #0f172a;
   --color-text-muted: #64748b;
   --color-border: #e2e8f0;
-  --color-success: #059669;        /* Verde esmeralda sobrio */
-  --color-danger: #e11d48;         /* Rojo carmesí suave */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --color-success: #059669;
+  --color-danger: #e11d48;
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.08);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 12px 20px -3px rgb(0 0 0 / 0.12), 0 6px 8px -4px rgb(0 0 0 / 0.06);
   --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
@@ -24,27 +29,80 @@
   padding: 0;
 }
 
+/* ==============================================================================
+   FONDO DE CANCHA DIVIDIDA: MITAD VOLEIBOL & MITAD BÁSQUETBOL (TRAÍDO DESDE GIT)
+   ============================================================================== */
 body {
   font-family: var(--font-family);
-  background-color: var(--color-bg);
   color: var(--color-text);
   line-height: 1.5;
   min-height: 100vh;
+  position: relative;
+  background-color: #0f172a;
 }
+
+.cancha-background-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cancha-svg-board {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.94;
+}
+
+.stadium-lighting-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.15) 0%, rgba(15, 23, 42, 0.35) 70%, rgba(15, 23, 42, 0.75) 100%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.court-frosted-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(248, 250, 252, 0.28);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+/* Balones flotantes en el fondo de la cancha */
+.floating-court-ball {
+  animation: floatCourtBall 6s ease-in-out infinite alternate;
+}
+.ball-voley-bg {
+  animation-delay: 0s;
+}
+.ball-basket-bg {
+  animation-delay: 3s;
+}
+@keyframes floatCourtBall {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(15deg); }
+  100% { transform: translateY(8px) rotate(-10deg); }
+}
+
 
 /* Encabezado / Navbar */
 .navbar {
-  background-color: #0f172a;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(12px);
   color: #ffffff;
   padding: 0.85rem 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 .navbar-brand {
@@ -67,6 +125,12 @@ body {
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  animation: pulse-glow 3s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4); }
+  100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.8); }
 }
 
 .nav-links {
@@ -84,7 +148,7 @@ body {
   cursor: pointer;
   font-size: 0.88rem;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -92,14 +156,15 @@ body {
 
 .nav-tab:hover {
   color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 .nav-tab.active {
   color: #ffffff;
   background-color: #1e293b;
-  border: 1px solid #334155;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .user-badge {
@@ -107,7 +172,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.85rem;
@@ -121,14 +186,20 @@ body {
   padding: 0 1rem;
 }
 
-/* Tarjetas y Contenedores */
+/* Tarjetas y Contenedores con efecto cristal deportivo */
 .card {
   background: var(--color-card-bg);
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: var(--shadow-md);
+  padding: 1.75rem;
+  margin-bottom: 1.75rem;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
 }
 
 .card-header {
@@ -149,36 +220,46 @@ body {
   gap: 0.5rem;
 }
 
-/* Botones */
+/* Botones con micro-interacción */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-weight: 600;
   font-size: 0.875rem;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   cursor: pointer;
   border: none;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {
   background-color: var(--color-accent);
   color: white;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .btn-primary:hover {
   background-color: var(--color-accent-hover);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
 }
 
 .btn-accent {
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
   color: white;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
 
 .btn-accent:hover {
-  background-color: #1d4ed8;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
 }
 
 .btn-outline {
@@ -190,6 +271,7 @@ body {
 .btn-outline:hover {
   background-color: #f1f5f9;
   border-color: #cbd5e1;
+  transform: translateY(-1px);
 }
 
 .btn-danger {
@@ -199,9 +281,34 @@ body {
 
 .btn-danger:hover {
   background-color: #be123c;
+  transform: translateY(-1px);
 }
 
-/* Tablas */
+/* ==============================================================================
+   TABLAS CON BORDEADO TEMÁTICO DE BALONES (Básquetbol 🏀 y Voleibol 🏐)
+   ============================================================================== */
+.table-court-container {
+  border-radius: 12px;
+  border: 2px solid #cbd5e1;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Ribete superior decorativo con balones */
+.table-balls-ribbon {
+  background: linear-gradient(90deg, #d97706 0%, #2563eb 100%);
+  color: white;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -212,14 +319,15 @@ body {
   border-collapse: collapse;
   text-align: left;
   font-size: 0.88rem;
+  background-color: #ffffff;
 }
 
 .table th {
   background-color: #f8fafc;
-  color: #475569;
+  color: #334155;
   font-weight: 700;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-border);
+  padding: 0.8rem 1rem;
+  border-bottom: 2px solid #e2e8f0;
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
@@ -227,15 +335,25 @@ body {
 
 .table td {
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
+  transition: background-color 0.15s ease;
 }
 
-.table tr:hover {
+.table tr:hover td {
   background-color: #f8fafc;
 }
 
-/* Badges de Deporte y Categoría */
+.table tr:hover .ball-spin {
+  animation: spin-ball 0.6s ease-in-out;
+}
+
+@keyframes spin-ball {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Badges */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -247,15 +365,15 @@ body {
 }
 
 .badge-basket {
-  background-color: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #dbeafe;
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
 }
 
 .badge-voley {
-  background-color: #f5f3ff;
-  color: #6d28d9;
-  border: 1px solid #ede9fe;
+  background-color: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
 }
 
 .badge-masc {
@@ -324,11 +442,17 @@ body {
 .kpi-card {
   background: white;
   padding: 1.25rem;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .kpi-title {
@@ -352,6 +476,45 @@ body {
   margin-top: 0.25rem;
 }
 
+/* ==============================================================================
+   CABECERAS CON SILUETAS / AVATARES DE JUGADORES EN LA CIMA DE LAS GRÁFICAS
+   ============================================================================== */
+.chart-header-figure {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.player-figure-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  animation: float-player 3s ease-in-out infinite;
+}
+
+.player-figure-basket {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.player-figure-voley {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+@keyframes float-player {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
 /* Comparador de rendimiento */
 .comparator-grid {
   display: grid;
@@ -370,7 +533,7 @@ body {
 .comparator-card {
   background: #ffffff;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 1.5rem;
   text-align: center;
   box-shadow: var(--shadow-sm);
@@ -379,22 +542,23 @@ body {
 
 .comparator-card.winner {
   border-color: var(--color-accent);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
 }
 
 .vs-badge {
   background: #0f172a;
   color: white;
   font-weight: 800;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   font-size: 0.95rem;
-  border: 2px solid #334155;
+  border: 3px solid #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
 }
 
 .metric-row {
@@ -410,7 +574,7 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,7 +584,7 @@ body {
 
 .modal-content {
   background: white;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 1.75rem;
   max-width: 500px;
   width: 100%;
@@ -428,3 +592,401 @@ body {
   max-height: 90vh;
   overflow-y: auto;
 }
+
+/* ==============================================================================
+   ANIMACIÓN DE CHOQUE DE BALONES AL CREAR PARTIDO 🏀💥🏐
+   ============================================================================== */
+.clash-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.clash-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 300px;
+  height: 180px;
+}
+
+.clash-ball-left {
+  font-size: 4rem;
+  animation: ball-rush-left 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.clash-ball-right {
+  font-size: 4rem;
+  animation: ball-rush-right 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.clash-spark {
+  position: absolute;
+  font-size: 4.5rem;
+  animation: spark-burst 0.7s 0.6s ease-out forwards;
+  opacity: 0;
+  transform: scale(0.2);
+}
+
+.clash-text {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-top: 1rem;
+  text-align: center;
+  animation: text-pop 0.5s 0.7s ease-out forwards;
+  opacity: 0;
+}
+
+.clash-subtext {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  animation: text-pop 0.5s 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes ball-rush-left {
+  0% { transform: translateX(-140px) rotate(-180deg); opacity: 0; }
+  60% { transform: translateX(20px) rotate(0deg); opacity: 1; }
+  75% { transform: translateX(0px) rotate(20deg); }
+  100% { transform: translateX(-15px) rotate(0deg); }
+}
+
+@keyframes ball-rush-right {
+  0% { transform: translateX(140px) rotate(180deg); opacity: 0; }
+  60% { transform: translateX(-20px) rotate(0deg); opacity: 1; }
+  75% { transform: translateX(0px) rotate(-20deg); }
+  100% { transform: translateX(15px) rotate(0deg); }
+}
+
+@keyframes spark-burst {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.4); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
+@keyframes text-pop {
+  0% { opacity: 0; transform: translateY(10px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ==============================================================================
+   CABECERA ILUSTRADA DE GRÁFICAS (Según Imagen del Usuario)
+   ============================================================================== */
+.card-illustrated-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.85rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.athlete-card-side {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.athlete-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.athlete-tag-voley {
+  font-size: 0.82rem;
+  color: #0284c7;
+  font-weight: 700;
+}
+
+.athlete-tag-basket {
+  font-size: 0.82rem;
+  color: #ea580c;
+  font-weight: 700;
+}
+
+.athlete-sub {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 0.15rem;
+}
+
+.clash-badge-center {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #0f172a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+  margin: 0 0.5rem;
+}
+
+.clash-badge-lightning {
+  background: #0f172a;
+  color: #facc15;
+  font-size: 0.95rem;
+}
+
+/* ==============================================================================
+   LANDING HERO SECTION & TELEMETRÍA EN VIVO (Estilo EarthScope Pro)
+   ============================================================================== */
+.hero-section {
+  background: radial-gradient(circle at 50% 20%, rgba(37, 99, 235, 0.2) 0%, transparent 60%),
+              linear-gradient(180deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.82) 100%);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 3.5rem 1rem 3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+
+.hero-content {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 0.3rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.25rem;
+}
+
+.live-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: pulse-ring 1.8s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.hero-title {
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.hero-gradient-text {
+  display: block;
+  background: linear-gradient(90deg, #38bdf8 0%, #818cf8 50%, #fb923c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: #94a3b8;
+  max-width: 740px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.75rem;
+}
+
+.hero-btn-main {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  padding: 0.75rem 1.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+}
+
+.hero-btn-sub {
+  color: #ffffff;
+  border-color: #475569;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 0.75rem 1.4rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.hero-btn-sub:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #94a3b8;
+}
+
+/* Grid de Telemetría Hero */
+.hero-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.telemetry-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.telemetry-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.telemetry-number {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0.2rem 0;
+}
+
+.telemetry-sub {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+/* Tarjetas de Disciplina (Básquet vs Vóley) */
+.sport-feature-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.75rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.sport-feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px -5px rgba(0,0,0,0.12);
+}
+
+.sport-card-basket:hover {
+  border-color: #fb923c;
+}
+
+.sport-card-voley:hover {
+  border-color: #38bdf8;
+}
+
+.sport-chip {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.chip-basket {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.chip-voley {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Tarjetas de Marcador Rápido */
+.mini-scorecard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  transition: all 0.2s;
+}
+
+.mini-scorecard:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* Animación de trayectoria de balón en la pizarra táctica */
+.dash-move-anim {
+  animation: dash-draw 1.5s linear infinite;
+}
+
+@keyframes dash-draw {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+/* Ondas de impacto y explosión de canasta / remate */
+.shockwave-ring {
+  animation: shockwaveExpand 0.8s ease-out forwards;
+}
+
+.shockwave-ring-delayed {
+  animation: shockwaveExpand 0.8s 0.15s ease-out forwards;
+}
+
+@keyframes shockwaveExpand {
+  0% {
+    r: 10px;
+    opacity: 1;
+    stroke-width: 4px;
+  }
+  100% {
+    r: 65px;
+    opacity: 0;
+    stroke-width: 1px;
+  }
+}
+
+

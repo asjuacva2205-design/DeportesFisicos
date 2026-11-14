@@ -22,8 +22,11 @@ export default function FormularioPartidoModal({
   const [jornada, setJornada] = useState(1);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState('');
+  const [mostrarChoque, setMostrarChoque] = useState(false);
 
   const esEdicion = Boolean(partidoParaEditar);
+  const deporteSeleccionado = deportes.find(d => d.id === Number(deporteId));
+  const esVoley = deporteSeleccionado?.codigo === 'VOLEY';
 
   useEffect(() => {
     if (partidoParaEditar) {
@@ -95,93 +98,122 @@ export default function FormularioPartidoModal({
 
     setCargando(false);
     if (res.ok) {
-      onGuardado();
-      onClose();
+      if (!esEdicion) {
+        // Disparar animación de choque de balones
+        setMostrarChoque(true);
+        setTimeout(() => {
+          setMostrarChoque(false);
+          onGuardado();
+          onClose();
+        }, 1600);
+      } else {
+        onGuardado();
+        onClose();
+      }
     } else {
       setError(esEdicion ? 'Error al actualizar el partido.' : 'Error al crear el partido. Revisa permisos o campos.');
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '520px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0f172a' }}>
-            {esEdicion ? <Edit3 size={20} color="#2563eb" /> : <PlusCircle size={20} color="#2563eb" />}
-            {esEdicion ? `Editar Partido #${partidoParaEditar.id}` : 'Registrar Nuevo Partido'}
-          </h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
-            <X size={20} />
-          </button>
+    <>
+      {/* Animación de choque de balones 🏀💥🏀 / 🏐💥🏐 */}
+      {mostrarChoque && (
+        <div className="clash-overlay">
+          <div className="clash-stage">
+            <div className="clash-ball-left">{esVoley ? '🏐' : '🏀'}</div>
+            <div className="clash-spark">💥</div>
+            <div className="clash-ball-right">{esVoley ? '🏐' : '🏀'}</div>
+          </div>
+          <div className="clash-text">
+            {esVoley ? '¡PUNTO, SET Y PARTIDO!' : '¡CANASTAZO REGISTRADO!'}
+          </div>
+          <div className="clash-subtext">
+            {esVoley ? 'Marcador de Voleibol sincronizado en CanchaData' : 'Marcador de Básquetbol sincronizado en CanchaData'}
+          </div>
         </div>
+      )}
 
-        {error && (
-          <div style={{ background: '#fee2e2', color: '#991b1b', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.85rem', marginBottom: '1rem' }}>
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div>
-              <label className="filter-label">Deporte</label>
-              <select className="form-select" style={{ width: '100%' }} value={deporteId} onChange={e => setDeporteId(e.target.value)} required>
-                {deportes.map(d => <option key={d.id} value={d.id}>{d.nombre}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="filter-label">Categoría</label>
-              <select className="form-select" style={{ width: '100%' }} value={categoriaId} onChange={e => setCategoriaId(e.target.value)} required>
-                {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div>
-              <label className="filter-label">Equipo Local</label>
-              <select className="form-select" style={{ width: '100%' }} value={equipoLocalId} onChange={e => setEquipoLocalId(e.target.value)} required>
-                {equiposFiltrados.map(eq => <option key={eq.id} value={eq.id}>{eq.nombre}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="filter-label">Equipo Visitante</label>
-              <select className="form-select" style={{ width: '100%' }} value={equipoVisitanteId} onChange={e => setEquipoVisitanteId(e.target.value)} required>
-                {equiposFiltrados.map(eq => <option key={eq.id} value={eq.id}>{eq.nombre}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div>
-              <label className="filter-label">Marcador Local</label>
-              <input type="number" min="0" className="form-input" style={{ width: '100%' }} value={puntosLocal} onChange={e => setPuntosLocal(e.target.value)} required />
-            </div>
-            <div>
-              <label className="filter-label">Marcador Visitante</label>
-              <input type="number" min="0" className="form-input" style={{ width: '100%' }} value={puntosVisitante} onChange={e => setPuntosVisitante(e.target.value)} required />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
-            <div>
-              <label className="filter-label">Fecha</label>
-              <input type="date" className="form-input" style={{ width: '100%' }} value={fecha} onChange={e => setFecha(e.target.value)} required />
-            </div>
-            <div>
-              <label className="filter-label">Temporada</label>
-              <input type="text" className="form-input" style={{ width: '100%' }} value={temporada} onChange={e => setTemporada(e.target.value)} required />
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-            <button type="button" className="btn btn-outline" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary" disabled={cargando}>
-              <Save size={16} /> {cargando ? 'Guardando...' : (esEdicion ? 'Actualizar Partido' : 'Crear Partido')}
+      <div className="modal-overlay">
+        <div className="modal-content" style={{ maxWidth: '520px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0f172a' }}>
+              {esEdicion ? <Edit3 size={20} color="#2563eb" /> : <PlusCircle size={20} color="#2563eb" />}
+              {esEdicion ? `Editar Partido #${partidoParaEditar.id}` : 'Registrar Nuevo Encuentro'}
+            </h3>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+              <X size={20} />
             </button>
           </div>
-        </form>
+
+          {error && (
+            <div style={{ background: '#fee2e2', color: '#991b1b', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.85rem', marginBottom: '1rem' }}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div>
+                <label className="filter-label">Disciplina</label>
+                <select className="form-select" style={{ width: '100%' }} value={deporteId} onChange={e => setDeporteId(e.target.value)} required>
+                  {deportes.map(d => <option key={d.id} value={d.id}>{d.nombre} {d.codigo === 'VOLEY' ? '🏐' : '🏀'}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="filter-label">Categoría</label>
+                <select className="form-select" style={{ width: '100%' }} value={categoriaId} onChange={e => setCategoriaId(e.target.value)} required>
+                  {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div>
+                <label className="filter-label">Club Local</label>
+                <select className="form-select" style={{ width: '100%' }} value={equipoLocalId} onChange={e => setEquipoLocalId(e.target.value)} required>
+                  {equiposFiltrados.map(eq => <option key={eq.id} value={eq.id}>{eq.nombre}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="filter-label">Club Visitante</label>
+                <select className="form-select" style={{ width: '100%' }} value={equipoVisitanteId} onChange={e => setEquipoVisitanteId(e.target.value)} required>
+                  {equiposFiltrados.map(eq => <option key={eq.id} value={eq.id}>{eq.nombre}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div>
+                <label className="filter-label">Puntos Local ({esVoley ? 'Sets' : 'Pts'})</label>
+                <input type="number" min="0" className="form-input" style={{ width: '100%', fontWeight: 700 }} value={puntosLocal} onChange={e => setPuntosLocal(e.target.value)} required />
+              </div>
+              <div>
+                <label className="filter-label">Puntos Visitante ({esVoley ? 'Sets' : 'Pts'})</label>
+                <input type="number" min="0" className="form-input" style={{ width: '100%', fontWeight: 700 }} value={puntosVisitante} onChange={e => setPuntosVisitante(e.target.value)} required />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label className="filter-label">Fecha de Encuentro</label>
+                <input type="date" className="form-input" style={{ width: '100%' }} value={fecha} onChange={e => setFecha(e.target.value)} required />
+              </div>
+              <div>
+                <label className="filter-label">Temporada</label>
+                <input type="text" className="form-input" style={{ width: '100%' }} value={temporada} onChange={e => setTemporada(e.target.value)} required />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+              <button type="button" className="btn btn-outline" onClick={onClose}>Cancelar</button>
+              <button type="submit" className="btn btn-primary" disabled={cargando}>
+                <Save size={16} /> {cargando ? 'Guardando...' : (esEdicion ? 'Actualizar Encuentro' : 'Crear Encuentro')}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

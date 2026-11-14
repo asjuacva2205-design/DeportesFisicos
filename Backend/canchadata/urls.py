@@ -11,7 +11,9 @@ from .views import (
     ComparadorRendimientoView,
     LimpiezaMasivaView,
     LoginTokenPersonalizadoView,
+    CargaMasivaView,
 )
+
 
 router = DefaultRouter()
 router.register('partidos', PartidoViewSet, basename='partido')
@@ -23,7 +25,9 @@ router.register('categorias', CategoriaViewSet, basename='categoria')
 urlpatterns = [
     path('estadisticas/', EstadisticasView.as_view(), name='estadisticas'),
     path('rendimiento/comparar/', ComparadorRendimientoView.as_view(), name='comparar-rendimiento'),
+    path('carga-masiva/', CargaMasivaView.as_view(), name='carga-masiva'),
     path('limpieza/', LimpiezaMasivaView.as_view(), name='limpieza-masiva'),
     path('auth/login/', LoginTokenPersonalizadoView.as_view(), name='api-login'),
     *router.urls,
 ]
+

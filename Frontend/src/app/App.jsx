@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
+import InicioHero from '../features/inicio/InicioHero';
 import ListadoPartidos from '../features/partidos/ListadoPartidos';
 import GestionDeportiva from '../features/gestion/GestionDeportiva';
 import PanelEstadisticas from '../features/estadisticas/PanelEstadisticas';
+import PizarraTacticaSimulator from '../features/pizarra/PizarraTacticaSimulator';
+import CargaMasivaView from '../features/carga_masiva/CargaMasivaView';
 import ComparadorRendimiento from '../features/rendimiento/ComparadorRendimiento';
 import AcercaDe from '../features/acerca_de/AcercaDe';
 import LoginModal from '../features/auth/LoginModal';
+import CanchaBackground from '../shared/CanchaBackground';
 import { getUserInfo } from '../shared/api';
 
 export default function App() {
-  const [pestanaActiva, setPestanaActiva] = useState('partidos');
+  const [pestanaActiva, setPestanaActiva] = useState('inicio');
   const [usuario, setUsuario] = useState({ token: null, username: '', isStaff: false });
   const [modalLoginAbierto, setModalLoginAbierto] = useState(false);
 
@@ -21,7 +25,10 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="app-root-wrapper" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      {/* Fondo de Cancha Dividida: Mitad Voleibol & Mitad Básquetbol (Traído desde Git) */}
+      <CanchaBackground />
+
       <Navbar
         pestanaActiva={pestanaActiva}
         setPestanaActiva={setPestanaActiva}
@@ -30,7 +37,12 @@ export default function App() {
         setModalLoginAbierto={setModalLoginAbierto}
       />
 
-      <main style={{ flex: 1, paddingBottom: '2rem' }}>
+      <main style={{ flex: 1, paddingBottom: '2.5rem', position: 'relative', zIndex: 2 }}>
+
+        {pestanaActiva === 'inicio' && (
+          <InicioHero setPestanaActiva={setPestanaActiva} />
+        )}
+
         {pestanaActiva === 'partidos' && (
           <ListadoPartidos
             usuario={usuario}
@@ -49,6 +61,14 @@ export default function App() {
           <PanelEstadisticas />
         )}
 
+        {pestanaActiva === 'pizarra' && (
+          <PizarraTacticaSimulator />
+        )}
+
+        {pestanaActiva === 'carga_masiva' && (
+          <CargaMasivaView />
+        )}
+
         {pestanaActiva === 'rendimiento' && (
           <ComparadorRendimiento />
         )}
@@ -57,6 +77,7 @@ export default function App() {
           <AcercaDe />
         )}
       </main>
+
 
       <footer style={{ background: '#0f172a', color: '#94a3b8', textAlign: 'center', padding: '1.25rem', fontSize: '0.8rem', borderTop: '1px solid #1e293b' }}>
         <div>

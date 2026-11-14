@@ -16,11 +16,13 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
 class EquipoSerializer(serializers.ModelSerializer):
     deporte_nombre = serializers.CharField(source='deporte.nombre', read_only=True)
+    deporte_codigo = serializers.CharField(source='deporte.codigo', read_only=True)
     categoria_nombre = serializers.CharField(source='categoria.nombre', read_only=True)
 
     class Meta:
         model = Equipo
-        fields = ['id', 'nombre', 'ciudad', 'siglas', 'deporte', 'categoria', 'deporte_nombre', 'categoria_nombre']
+        fields = ['id', 'nombre', 'ciudad', 'siglas', 'deporte', 'categoria', 'deporte_nombre', 'deporte_codigo', 'categoria_nombre']
+
 
 
 class JugadorSerializer(serializers.ModelSerializer):

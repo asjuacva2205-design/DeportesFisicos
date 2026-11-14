@@ -171,41 +171,51 @@ export default function ListadoPartidos({ usuario, setModalLoginAbierto }) {
           </div>
         </form>
 
-        {/* Tabla Paginada */}
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Deporte / Rama</th>
-                <th>Fecha</th>
-                <th>Encuentro</th>
-                <th style={{ textAlign: 'center' }}>Marcador</th>
-                <th>Ganador</th>
-                <th>Temporada</th>
-                {usuario.token && <th style={{ textAlign: 'right' }}>Acción</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {cargando ? (
+        {/* Tabla Paginada con ribete temático de balones de básquet y vóley */}
+        <div className="table-court-container">
+          <div className="table-balls-ribbon">
+            <span>🏀 TABLONCILLO OFICIAL BÁSQUETBOL</span>
+            <span>🏐 RED Y PISTA OFICIAL VOLEIBOL</span>
+          </div>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
                 <tr>
-                  <td colSpan={usuario.token ? 8 : 7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                    Cargando partidos desde PostgreSQL...
-                  </td>
+                  <th>ID</th>
+                  <th>Deporte / Rama</th>
+                  <th>Fecha</th>
+                  <th>Encuentro</th>
+                  <th style={{ textAlign: 'center' }}>Marcador</th>
+                  <th>Ganador</th>
+                  <th>Temporada</th>
+                  {usuario.token && <th style={{ textAlign: 'right' }}>Acción</th>}
                 </tr>
-              ) : partidos.length === 0 ? (
-                <tr>
-                  <td colSpan={usuario.token ? 8 : 7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                    No se encontraron partidos con los filtros aplicados.
-                  </td>
-                </tr>
-              ) : (
-                partidos.map((p) => {
-                  const esBasket = p.deporte_codigo === 'BASKET';
-                  const esFem = p.categoria_nombre === 'Femenino';
-                  return (
-                    <tr key={p.id}>
-                      <td style={{ fontWeight: 600, color: '#64748b' }}>#{p.id}</td>
+              </thead>
+              <tbody>
+                {cargando ? (
+                  <tr>
+                    <td colSpan={usuario.token ? 8 : 7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                      Cargando partidos desde PostgreSQL...
+                    </td>
+                  </tr>
+                ) : partidos.length === 0 ? (
+                  <tr>
+                    <td colSpan={usuario.token ? 8 : 7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                      No se encontraron partidos con los filtros aplicados.
+                    </td>
+                  </tr>
+                ) : (
+                  partidos.map((p) => {
+                    const esBasket = p.deporte_codigo === 'BASKET';
+                    const esFem = p.categoria_nombre === 'Femenino';
+                    return (
+                      <tr key={p.id}>
+                        <td style={{ fontWeight: 600, color: '#64748b' }}>
+                          <span className="ball-spin" style={{ display: 'inline-block', marginRight: '0.3rem' }}>
+                            {esBasket ? '🏀' : '🏐'}
+                          </span>
+                          #{p.id}
+                        </td>
                       <td>
                         <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                           <span className={`badge ${esBasket ? 'badge-basket' : 'badge-voley'}`}>
@@ -270,6 +280,7 @@ export default function ListadoPartidos({ usuario, setModalLoginAbierto }) {
             </tbody>
           </table>
         </div>
+      </div>
 
         {/* Paginación */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '1rem' }}>

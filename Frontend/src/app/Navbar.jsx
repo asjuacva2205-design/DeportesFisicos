@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, BarChart3, Scale, Info, LogIn, LogOut, ShieldCheck, Trophy, Users } from 'lucide-react';
+import { Activity, BarChart3, Scale, Info, LogIn, LogOut, ShieldCheck, Trophy, Users, Home, Target, Database } from 'lucide-react';
 import { removeToken } from '../shared/api';
 
 export default function Navbar({ pestanaActiva, setPestanaActiva, usuario, setUsuario, setModalLoginAbierto }) {
@@ -11,7 +11,7 @@ export default function Navbar({ pestanaActiva, setPestanaActiva, usuario, setUs
   return (
     <header className="navbar">
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-        <a href="#" className="navbar-brand" onClick={(e) => { e.preventDefault(); setPestanaActiva('partidos'); }}>
+        <a href="#" className="navbar-brand" onClick={(e) => { e.preventDefault(); setPestanaActiva('inicio'); }}>
           <Trophy size={24} color="#38bdf8" />
           <span>CanchaData</span>
           <span className="brand-badge">PRO</span>
@@ -19,38 +19,61 @@ export default function Navbar({ pestanaActiva, setPestanaActiva, usuario, setUs
 
         <nav className="nav-links">
           <button
+            className={`nav-tab ${pestanaActiva === 'inicio' ? 'active' : ''}`}
+            onClick={() => setPestanaActiva('inicio')}
+          >
+            <Home size={15} /> Inicio
+          </button>
+
+          <button
             className={`nav-tab ${pestanaActiva === 'partidos' ? 'active' : ''}`}
             onClick={() => setPestanaActiva('partidos')}
           >
-            <Activity size={16} /> Partidos
+            <Activity size={15} /> Partidos
           </button>
 
           <button
             className={`nav-tab ${pestanaActiva === 'gestion' ? 'active' : ''}`}
             onClick={() => setPestanaActiva('gestion')}
           >
-            <Users size={16} /> Atletas y Clubes
+            <Users size={15} /> Atletas y Clubes
           </button>
 
           <button
             className={`nav-tab ${pestanaActiva === 'estadisticas' ? 'active' : ''}`}
             onClick={() => setPestanaActiva('estadisticas')}
           >
-            <BarChart3 size={16} /> Estadísticas ORM
+            <BarChart3 size={15} /> Estadísticas ORM
+          </button>
+
+          <button
+            className={`nav-tab ${pestanaActiva === 'pizarra' ? 'active' : ''}`}
+            onClick={() => setPestanaActiva('pizarra')}
+            style={{ color: pestanaActiva === 'pizarra' ? '#ffffff' : '#38bdf8' }}
+          >
+            <Target size={15} /> Pizarra Táctica
+          </button>
+
+          <button
+            className={`nav-tab ${pestanaActiva === 'carga_masiva' ? 'active' : ''}`}
+            onClick={() => setPestanaActiva('carga_masiva')}
+            style={{ color: pestanaActiva === 'carga_masiva' ? '#ffffff' : '#4ade80' }}
+          >
+            <Database size={15} /> Carga Masiva
           </button>
 
           <button
             className={`nav-tab ${pestanaActiva === 'rendimiento' ? 'active' : ''}`}
             onClick={() => setPestanaActiva('rendimiento')}
           >
-            <Scale size={16} /> Comparador Cara a Cara
+            <Scale size={15} /> Comparador
           </button>
 
           <button
             className={`nav-tab ${pestanaActiva === 'acerca_de' ? 'active' : ''}`}
             onClick={() => setPestanaActiva('acerca_de')}
           >
-            <Info size={16} /> Acerca del Proyecto
+            <Info size={15} /> Acerca de
           </button>
         </nav>
       </div>

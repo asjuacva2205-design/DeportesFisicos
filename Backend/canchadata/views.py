@@ -445,3 +445,101 @@ class LoginTokenPersonalizadoView(ObtainAuthToken):
             'username': user.username,
             'is_staff': user.is_staff,
         })
+
+
+class CargaMasivaView(APIView):
+    """
+    GET /api/carga-masiva/
+    Retorna métricas del estado actual de la base de datos PostgreSQL.
+
+    POST /api/carga-masiva/
+    Dispara la sincronización masiva (> 1.000 filas de rendimiento).
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        total_partidos = Partido.objects.count()
+        total_estadisticas = EstadisticaJugadorPartido.objects.count()
+        return Response({
+            'estado': 'Conectado (PostgreSQL)',
+            'deportes': Deporte.objects.count(),
+            'categorias': Categoria.objects.count(),
+            'equipos': Equipo.objects.count(),
+            'jugadores': Jugador.objects.count(),
+            'partidos': total_partidos,
+            'estadisticas_individuales': total_estadisticas,
+            'supera_mil': total_estadisticas >= 1000,
+        })
+
+    def post(self, request):
+        from .fuente_datos import DATOS_INICIALES, generar_fixture_y_estadisticas
+        inicio = time.perf_counter()
+
+        # 1. Deportes
+        deporte_objs = {}
+        for dep in DATOS_INICIALES['deportes']:
+            obj, _ = Deporte.objects.get_or_create(
+                codigo=dep['codigo'],
+                defaults={'nombre': dep['nombre'], 'icono': dep['icono']}
+            )
+            deporte_objs[dep['codigo']] = obj
+
+        # 2. Categorías
+        categoria_objs = {}
+        for cat in DATOS_INICIALES['categorias']:
+            obj, _ = Categoria.objects.get_or_create(
+                codigo=cat['codigo'],
+                defaults={'nombre': cat['nombre']}
+            )
+            categoria_objs[cat['codigo']] = obj
+
+        # 3. Equipos
+        equipos_dict = {}
+        for eq in DATOS_INICIALES['equipos']:
+            obj, _ = Equipo.objects.get_or_create(
+                nombre=eq['nombre'],
+                deporte=deporte_objs[eq['deporte']],
+                categoria=categoria_objs[eq['categoria']],
+                defaults={'ciudad': eq['ciudad'], 'siglas': eq['siglas']}
+            )
+            equipos_dict[eq['nombre']] = obj
+
+        # 4. Jugadores
+        jugadores_por_equipo = {}
+        for jug in DATOS_INICIALES['jugadores']:
+            equipo_obj = equipos_dict[jug['equipo']]
+            obj, _ = Jugador.objects.get_or_create(
+                nombre=jug['nombre'],
+                equipo=equipo_obj,
+                categoria=categoria_objs[jug['categoria']],
+                defaults={
+                    'dorsal': jug['dorsal'],
+                    'posicion': jug['posicion'],
+                    'edad': jug['edad'],
+                    'altura_cm': jug['altura_cm'],
+                }
+            )
+            jugadores_por_equipo.setdefault(equipo_obj.id, []).append(obj)
+
+        # 5. Partidos y estadísticas
+        total_p, total_e = generar_fixture_y_estadisticas(
+            equipos_dict,
+            jugadores_por_equipo,
+            deporte_objs,
+            categoria_objs
+        )
+
+        ms = (time.perf_counter() - inicio) * 1000
+
+        return Response({
+            'exito': True,
+            'mensaje': 'Carga masiva ejecutada con éxito en PostgreSQL',
+            'tiempo_ms': round(ms, 2),
+            'deportes': Deporte.objects.count(),
+            'categorias': Categoria.objects.count(),
+            'equipos': Equipo.objects.count(),
+            'jugadores': Jugador.objects.count(),
+            'partidos': Partido.objects.count(),
+            'estadisticas_individuales': EstadisticaJugadorPartido.objects.count(),
+        })
+

@@ -146,16 +146,66 @@ export default function PanelEstadisticas() {
         </div>
       </div>
 
-      {/* Gráficos Recharts */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
-        {/* Gráfico 1: Agrupación por Deporte y Categoría (Diferenciados) */}
+      {/* Gráficos Recharts con Figuras Ilustradas Exactas */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(520px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
+        {/* Gráfico 1: Agrupación por Deporte y Categoría */}
         <div className="card">
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Layers size={18} color="#2563eb" /> Puntuación Promedio por Deporte y Género
-          </h3>
-          <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>
-            Diferenciación real entre ligas masculinas y femeninas según duración y reglas oficiales.
-          </p>
+          {/* Cabecera Ilustrada: Rematador Élite VS Dunk Master */}
+          <div className="card-illustrated-header">
+            {/* Lado Izquierdo: Rematador Élite Vóley */}
+            <div className="athlete-card-side">
+              <svg width="48" height="56" viewBox="0 0 50 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 54 L20 38" stroke="#0284c7" strokeWidth="2.2" strokeDasharray="3 3" strokeLinecap="round" />
+                <path d="M12 48 L20 36 L24 46 L30 44" stroke="#0284c7" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M20 36 L26 22" stroke="#0284c7" strokeWidth="4" strokeLinecap="round" />
+                <circle cx="27" cy="15" r="5" fill="#0284c7" />
+                <path d="M24 25 L15 28 L14 22" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                <path d="M26 23 L34 14 L41 12" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                <circle cx="43" cy="9" r="6" fill="#facc15" stroke="#0284c7" strokeWidth="1.5" />
+                <path d="M38 9 Q43 6 48 9" stroke="#0284c7" strokeWidth="1" />
+                <path d="M43 3 Q40 9 43 15" stroke="#0284c7" strokeWidth="1" />
+              </svg>
+              <div className="athlete-info">
+                <span className="athlete-tag-voley">🏐 Rematador<br/><strong>Élite</strong></span>
+                <span className="athlete-sub">Salto Vertical +95cm</span>
+              </div>
+            </div>
+
+            {/* Badge Central VS */}
+            <div className="clash-badge-center">
+              VS
+            </div>
+
+            {/* Lado Derecho: Dunk Master Básquet */}
+            <div className="athlete-card-side" style={{ justifyContent: 'flex-end' }}>
+              <div className="athlete-info" style={{ textAlign: 'right' }}>
+                <span className="athlete-tag-basket">🏀 Dunk<br/><strong>Master</strong></span>
+                <span className="athlete-sub">Clavada 360° Slam</span>
+              </div>
+              <svg width="48" height="56" viewBox="0 0 50 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="42" y="6" width="3" height="18" fill="#334155" rx="1" />
+                <path d="M42 16 L33 16" stroke="#ea580c" strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M33 16 L35 24 L39 24 L42 16" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="2 2" fill="none" />
+                <path d="M12 48 L18 36 L25 44 L31 40" stroke="#ea580c" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M18 36 L24 24" stroke="#ea580c" strokeWidth="4" strokeLinecap="round" />
+                <circle cx="24" cy="17" r="5" fill="#ea580c" />
+                <path d="M23 24 L28 14 L34 13" stroke="#ea580c" strokeWidth="3" strokeLinecap="round" />
+                <path d="M23 24 L19 18 L30 11" stroke="#ea580c" strokeWidth="2.5" strokeLinecap="round" />
+                <circle cx="34" cy="9" r="6" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
+                <path d="M30 9 Q34 6 38 9" stroke="#9a3412" strokeWidth="0.8" />
+                <path d="M34 4 Q31 9 34 14" stroke="#9a3412" strokeWidth="0.8" />
+              </svg>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '0.75rem', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Layers size={18} color="#2563eb" /> Puntuación Promedio por Deporte y Género
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: '#64748b' }}>
+              Diferenciación real entre ligas masculinas y femeninas según duración y reglas oficiales.
+            </p>
+          </div>
 
           <div style={{ height: '300px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -172,14 +222,61 @@ export default function PanelEstadisticas() {
           </div>
         </div>
 
-        {/* Gráfico 2: Rendimiento Comparativo por Equipo */}
+        {/* Gráfico 2: Rendimiento Comparativo por Equipo (Top Anotadores) */}
         <div className="card">
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Shield size={18} color="#4f46e5" /> Rendimiento Comparativo por Equipo (Top Anotadores)
-          </h3>
-          <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>
-            Cálculo ORM: <code style={{ color: '#0f172a' }}>values('equipo_local__nombre').annotate(Avg('puntos_local'))</code>
-          </p>
+          {/* Cabecera Ilustrada: Crossover Speed ⚡ Muralla Defensiva */}
+          <div className="card-illustrated-header">
+            {/* Lado Izquierdo: Crossover Speed Básquet */}
+            <div className="athlete-card-side">
+              <svg width="48" height="56" viewBox="0 0 50 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="10" cy="42" r="6" fill="#f97316" stroke="#c2410c" strokeWidth="1.2" />
+                <path d="M6 42 Q10 39 14 42" stroke="#9a3412" strokeWidth="0.8" />
+                <path d="M10 37 Q8 42 10 47" stroke="#9a3412" strokeWidth="0.8" />
+                <path d="M14 52 L22 38 L34 52" stroke="#ea580c" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M22 38 L25 24" stroke="#ea580c" strokeWidth="4" strokeLinecap="round" />
+                <circle cx="27" cy="16" r="5" fill="#ea580c" />
+                <path d="M24 26 L16 33 L12 38" stroke="#ea580c" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M26 26 L36 29 L38 35" stroke="#ea580c" strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
+              <div className="athlete-info">
+                <span className="athlete-tag-basket">🏀 Crossover<br/><strong>Speed</strong></span>
+                <span className="athlete-sub">Líder Anotador</span>
+              </div>
+            </div>
+
+            {/* Badge Central Rayo ⚡ */}
+            <div className="clash-badge-center clash-badge-lightning">
+              ⚡
+            </div>
+
+            {/* Lado Derecho: Muralla Defensiva Vóley */}
+            <div className="athlete-card-side" style={{ justifyContent: 'flex-end' }}>
+              <div className="athlete-info" style={{ textAlign: 'right' }}>
+                <span className="athlete-tag-voley">🏐 Muralla<br/><strong>Defensiva</strong></span>
+                <span className="athlete-sub">Bloqueo de Impacto</span>
+              </div>
+              <svg width="48" height="56" viewBox="0 0 50 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 52 L23 38 L31 52" stroke="#0284c7" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M23 38 L25 24" stroke="#0284c7" strokeWidth="4" strokeLinecap="round" />
+                <circle cx="25" cy="16" r="5" fill="#0284c7" />
+                <path d="M24 26 L29 32 L36 31" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                <path d="M26 26 L30 33 L37 32" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" />
+                <circle cx="39" cy="27" r="6" fill="#facc15" stroke="#0284c7" strokeWidth="1.5" />
+                <path d="M35 27 Q39 24 43 27" stroke="#0284c7" strokeWidth="1" />
+                <path d="M39 22 Q37 27 39 32" stroke="#0284c7" strokeWidth="1" />
+              </svg>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '0.75rem', marginBottom: '0.35rem' }}>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Shield size={18} color="#4f46e5" /> Rendimiento Comparativo por Equipo (Top Anotadores)
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: '#64748b' }}>
+              Cálculo ORM: <code style={{ color: '#0f172a' }}>values('equipo_local__nombre').annotate(Avg('puntos_local'))</code>
+            </p>
+          </div>
+
 
           <div style={{ height: '300px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
