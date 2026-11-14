@@ -11,7 +11,16 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-canchadata-default-key-dev-2026')
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', '*']
+# ALLOWED_HOSTS dinámico (admite Render y local)
+allowed_env = os.getenv('ALLOWED_HOSTS', '').strip()
+if allowed_env:
+    ALLOWED_HOSTS = [h.strip() for h in allowed_env.split(',') if h.strip()]
+    for def_host in ['localhost', '127.0.0.1', '.onrender.com']:
+        if def_host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(def_host)
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', '*']
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,6 +71,17 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:5173',
 ]
 
+csrf_env = os.getenv('CSRF_TRUSTED_ORIGINS', '').strip()
+if csrf_env:
+    for origin in csrf_env.split(','):
+        cleaned = origin.strip()
+        if cleaned:
+            if not cleaned.startswith('http://') and not cleaned.startswith('https://'):
+                cleaned = f'https://{cleaned}'
+            if cleaned not in CSRF_TRUSTED_ORIGINS:
+                CSRF_TRUSTED_ORIGINS.append(cleaned)
+
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -88,7 +108,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # 2. Si no, lee las variables individuales (DB_HOST, DB_PORT, etc.).
 # 3. Si no hay variables, usa el entorno local (localhost:5433).
 
-database_url = os.getenv('DATABASE_URL')
+database_url = os.getenv('DATABASE_URL', '').strip().strip('"\'')
 
 if database_url:
     # Render suele entregar postgres://; normalizar a postgresql://
@@ -98,8 +118,8 @@ if database_url:
     try:
         import dj_database_url
         DATABASES = {
-            'default': dj_database_url.config(
-                default=database_url,
+            'default': dj_database_url.parse(
+                database_url,
                 conn_max_age=600,
                 conn_health_checks=True,
             )
@@ -122,6 +142,7 @@ if database_url:
                 'OPTIONS': options,
             }
         }
+
 else:
     db_user = os.getenv('DB_USER', 'postgres')
     db_password = os.getenv('DB_PASSWORD', '')
