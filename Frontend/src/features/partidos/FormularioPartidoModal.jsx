@@ -23,12 +23,12 @@ export default function FormularioPartidoModal({
   const [jornada, setJornada] = useState(1);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState('');
-  const [mostrarChoque, setMostrarChoque] = useState(false);
 
   // Estado para la animación de choque de balones
   const [mostrarChoque, setMostrarChoque] = useState(false);
   const [choqueDeporteCodigo, setChoqueDeporteCodigo] = useState('BASKET');
   const [nombresEquipos, setNombresEquipos] = useState({ local: 'Equipo Local', visitante: 'Equipo Visitante' });
+
 
   const esEdicion = Boolean(partidoParaEditar);
   const deporteSeleccionado = deportes.find(d => d.id === Number(deporteId));

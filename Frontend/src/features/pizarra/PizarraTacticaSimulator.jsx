@@ -5,7 +5,7 @@ import {
   ChevronRight, Activity, Flame, Compass, CheckCircle2
 } from 'lucide-react';
 
-export default function PizarraTizarraSimulator() {
+export default function PizarraTacticaSimulator() {
   const [deporte, setDeporte] = useState('BASKET'); // 'BASKET' | 'VOLEY'
   const [simulando, setSimulando] = useState(false);
   const [pasoActual, setPasoActual] = useState(0); // Índice del paso actual en la secuencia de jugadores
