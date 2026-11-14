@@ -32,6 +32,12 @@
 /* ==============================================================================
    FONDO DE CANCHA DIVIDIDA: MITAD VOLEIBOL & MITAD BÁSQUETBOL (TRAÍDO DESDE GIT)
    ============================================================================== */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
 body {
   font-family: var(--font-family);
   color: var(--color-text);
@@ -40,6 +46,7 @@ body {
   position: relative;
   background-color: #0f172a;
 }
+
 
 .cancha-background-container {
   position: fixed;
@@ -89,215 +96,340 @@ body {
 }
 
 
-/* Encabezado / Navbar */
-.navbar-container {
+/* ==============================================================================
+   ENCABEZADO / NAVBAR PROFESIONAL (DESKTOP + MENÚ FLOTANTE MÓVIL EN ESQUINA)
+   ============================================================================== */
+.navbar-wrapper {
   position: sticky;
   top: 0;
   z-index: 100;
   background: rgba(15, 23, 42, 0.96);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  width: 100%;
 }
 
-.navbar {
-  padding: 0.75rem 1.25rem;
+.navbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0.75rem 1.25rem;
   max-width: 1300px;
   margin: 0 auto;
+  position: relative;
+  width: 100%;
 }
 
-.navbar-left {
+/* Marca / Logo CanchaData */
+.navbar-brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.brand-badge-pill {
+  background: linear-gradient(135deg, #2563eb, #6366f1);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+}
+
+/* Pestañas de navegación en Desktop */
+.desktop-navbar-nav {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.35rem;
 }
 
-.navbar-right {
+.desktop-nav-btn {
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.desktop-nav-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.desktop-nav-btn.active {
+  color: #ffffff;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Sección de autenticación en Desktop */
+.desktop-auth-section {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
 }
 
-.user-section {
+.auth-logged-box {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.mobile-menu-toggle {
+.auth-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.btn-auth-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-auth-action.login {
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+}
+
+.btn-auth-action.login:hover {
+  background: linear-gradient(135deg, #0369a1, #1d4ed8);
+}
+
+.btn-auth-action.logout {
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-auth-action.logout:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ==============================================================================
+   BOTÓN EN ESQUINA SUPERIOR DERECHA (MÓVIL / TABLET)
+   ============================================================================== */
+.mobile-corner-box {
   display: none;
-  background: rgba(255, 255, 255, 0.1);
+  align-items: center;
+}
+
+.mobile-menu-corner-btn {
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
   padding: 0.45rem;
   border-radius: 8px;
   cursor: pointer;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
 }
 
-.mobile-menu-toggle:hover {
+.mobile-menu-corner-btn:hover,
+.mobile-menu-corner-btn.open {
   background: rgba(255, 255, 255, 0.2);
-}
-
-/* Barra deslizable de pestañas en móvil */
-.nav-mobile-pills {
-  display: none;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 0.4rem 0.75rem 0.6rem;
-  gap: 0.4rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.nav-mobile-pills::-webkit-scrollbar {
-  display: none;
-}
-
-.pill-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  background: rgba(30, 41, 59, 0.85);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.2s;
-}
-
-.pill-tab.active {
-  background: linear-gradient(135deg, #0284c7, #2563eb);
-  color: #ffffff;
   border-color: #38bdf8;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+  color: #38bdf8;
 }
 
-/* Drawer desplegable en móvil */
-.mobile-menu-drawer {
+/* ==============================================================================
+   MENÚ DESPLEGABLE FLOTANTE EN ESQUINA SUPERIOR DERECHA
+   ============================================================================== */
+.mobile-corner-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0.75rem;
+  width: 280px;
+  max-width: calc(100vw - 1.5rem);
   background: #0f172a;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.85rem 1rem 1.25rem;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  z-index: 1000;
+  animation: dropdownCornerFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.mobile-menu-items {
+@keyframes dropdownCornerFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-header-status {
+  padding: 0.85rem 1rem 0.65rem;
+  background: rgba(30, 41, 59, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dropdown-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.dropdown-user-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.dropdown-user-role {
+  font-size: 0.72rem;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.dropdown-guest-info {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dropdown-links-list {
+  padding: 0.45rem;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.2rem;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
-.mobile-menu-link {
+.dropdown-item-btn {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 0.65rem 1rem;
+  padding: 0.65rem 0.85rem;
   background: transparent;
   color: #cbd5e1;
   border: none;
   border-radius: 8px;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.mobile-menu-link:hover,
-.mobile-menu-link.active {
-  background: #1e293b;
+.dropdown-item-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
-.mobile-menu-link.active {
-  background: linear-gradient(90deg, #1e3a8a, #0284c7);
-  color: #ffffff;
+
+.dropdown-item-btn.active {
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0.25), rgba(37, 99, 235, 0.35));
+  color: #38bdf8;
   font-weight: 700;
 }
 
-.navbar-brand {
+.dropdown-item-icon {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-weight: 800;
-  font-size: 1.35rem;
-  letter-spacing: -0.025em;
-  color: #ffffff;
-  text-decoration: none;
+  justify-content: center;
+  color: inherit;
 }
 
-.brand-badge {
-  background: linear-gradient(135deg, #2563eb, #6366f1);
-  color: white;
-  padding: 0.15rem 0.55rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  animation: pulse-glow 3s infinite alternate;
+.dropdown-item-text {
+  flex: 1;
 }
 
-@keyframes pulse-glow {
-  0% { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4); }
-  100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.8); }
+.dropdown-active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
 }
 
-.nav-links {
-  display: flex;
-  gap: 0.35rem;
-  align-items: center;
+.dropdown-auth-footer {
+  padding: 0.65rem 0.85rem;
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-
-.nav-tab {
-  background: transparent;
-  color: #94a3b8;
-  border: none;
-  padding: 0.5rem 0.85rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.88rem;
-  font-weight: 600;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.dropdown-auth-btn {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-}
-
-.nav-tab:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
-}
-
-.nav-tab.active {
-  color: #ffffff;
-  background-color: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.user-badge {
-  display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
+  padding: 0.55rem;
+  border-radius: 8px;
   font-size: 0.85rem;
-  color: #e2e8f0;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dropdown-auth-btn.login {
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: #ffffff;
+}
+
+.dropdown-auth-btn.logout {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Ocultar barra deslizante antigua si hubiera restos */
+.nav-mobile-pills {
+  display: none !important;
 }
 
 /* Contenedor principal */
@@ -1474,14 +1606,15 @@ body {
    MEDIA QUERIES PARA ADAPTAR A TABLETS (<= 1024px)
    ============================================================================== */
 @media (max-width: 1024px) {
-  .desktop-nav {
+  .desktop-navbar-nav,
+  .desktop-auth-section {
     display: none !important;
   }
-  .mobile-menu-toggle {
-    display: inline-flex !important;
+  .mobile-corner-box {
+    display: flex !important;
   }
   .nav-mobile-pills {
-    display: flex !important;
+    display: none !important;
   }
   .container {
     padding: 0 0.85rem;
@@ -1500,26 +1633,30 @@ body {
    MEDIA QUERIES PARA CELULARES Y SMARTPHONES (<= 768px)
    ============================================================================== */
 @media (max-width: 768px) {
-  .navbar {
+  .navbar-inner {
     padding: 0.65rem 0.85rem;
   }
-  .navbar-brand {
+  .navbar-brand-logo {
     font-size: 1.15rem;
-    gap: 0.45rem;
+    gap: 0.5rem;
   }
-  .brand-badge {
+  .brand-badge-pill {
     font-size: 0.65rem;
     padding: 0.1rem 0.4rem;
   }
-  .user-badge {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.78rem;
+  .mobile-corner-dropdown-menu {
+    right: 0.5rem;
+    width: min(290px, calc(100vw - 1rem));
   }
-  .logout-text, .login-text {
-    display: none;
+  .desktop-navbar-nav,
+  .desktop-auth-section {
+    display: none !important;
   }
-  .btn-login, .btn-logout {
-    padding: 0.4rem 0.6rem;
+  .mobile-corner-box {
+    display: flex !important;
+  }
+  .nav-mobile-pills {
+    display: none !important;
   }
 
   .container {

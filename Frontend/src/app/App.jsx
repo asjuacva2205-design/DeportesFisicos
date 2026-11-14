@@ -25,7 +25,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="app-root-wrapper" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div className="app-root-wrapper" style={{ minHeight: '100vh', width: '100%', maxWidth: '100vw', overflowX: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       {/* Fondo de Cancha Dividida: Mitad Voleibol & Mitad Básquetbol (Traído desde Git) */}
       <CanchaBackground />
 
