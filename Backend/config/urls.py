@@ -1,5 +1,4 @@
 """Rutas principales del Backend para CanchaData."""
-import os
 from pathlib import Path
 from django.contrib import admin
 from django.urls import path, include, re_path
@@ -20,26 +19,36 @@ def find_frontend_dir():
             return c
     return None
 
-def index_view(request):
+def spa_or_file_view(request, path=''):
     f_dir = find_frontend_dir()
-    if f_dir and (f_dir / 'index.html').exists():
-        with open(f_dir / 'index.html', 'r', encoding='utf-8') as f:
+    if not f_dir:
+        return HttpResponse(
+            '<h2>API de CanchaData activa</h2>'
+            '<p>Visita <a href="/api/">/api/</a> para consultar los endpoints o compila el frontend con <code>npm run build</code>.</p>',
+            content_type='text/html; charset=utf-8'
+        )
+    
+    # 1. Si la ruta apunta a un archivo estático real en Frontend/dist (ej: assets/..., favicon.ico)
+    if path:
+        target_file = f_dir / path
+        if target_file.is_file():
+            return serve(request, path, document_root=str(f_dir))
+
+    # 2. De lo contrario (/, /partidos, /estadisticas, /rendimiento, /pizarra, /acerca-de)
+    # Servir index.html de la SPA React
+    index_file = f_dir / 'index.html'
+    if index_file.exists():
+        with open(index_file, 'r', encoding='utf-8') as f:
             return HttpResponse(f.read(), content_type='text/html; charset=utf-8')
+            
     return HttpResponse(
         '<h2>API de CanchaData activa</h2>'
-        '<p>Visita <a href="/api/">/api/</a> para consultar los endpoints o inicia el frontend con <code>npm run dev</code>.</p>',
+        '<p>Visita <a href="/api/">/api/</a> para consultar los endpoints.</p>',
         content_type='text/html; charset=utf-8'
     )
-
-def assets_serve(request, path):
-    f_dir = find_frontend_dir()
-    if f_dir and (f_dir / 'assets').exists():
-        return serve(request, path, document_root=str(f_dir / 'assets'))
-    return HttpResponse(status=404)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('canchadata.urls')),
-    path('assets/<path:path>', assets_serve, name='frontend-assets'),
-    re_path(r'^(?!api|admin|static|assets).*$', index_view, name='frontend-spa'),
+    re_path(r'^(?!api|admin)(?P<path>.*)$', spa_or_file_view, name='frontend-spa'),
 ]
