@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { peticion } from '../../shared/api';
-import { Search, Plus, Trash2, Calendar, Trophy, ChevronLeft, ChevronRight, Zap, Edit3 } from 'lucide-react';
+import { Search, Plus, Trash2, Calendar, Trophy, ChevronLeft, ChevronRight, Zap, Edit3, Flame } from 'lucide-react';
 import FormularioPartidoModal from './FormularioPartidoModal';
 import ModalConfirmarBorrado from './ModalConfirmarBorrado';
+import SportTableBorder from '../../shared/SportTableBorder';
 
 export default function ListadoPartidos({ usuario, setModalLoginAbierto }) {
   const [partidos, setPartidos] = useState([]);

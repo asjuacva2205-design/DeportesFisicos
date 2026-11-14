@@ -83,8 +83,8 @@ export default function App() {
         <div>
           <strong>CanchaData &copy; 2026</strong> — Plataforma de Analítica para Básquetbol y Voleibol
         </div>
-        <div style={{ marginTop: '0.25rem' }}>
-          Construido con Django 6, DRF, PostgreSQL y React 19 siguiendo las especificaciones del Taller.
+        <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+          Plataforma de Alto Rendimiento Deportivo construida con Django 6, DRF, PostgreSQL y React 19.
         </div>
       </footer>
 

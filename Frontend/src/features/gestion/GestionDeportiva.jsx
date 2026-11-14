@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { peticion } from '../../shared/api';
-import { Users, Shield, Plus, Edit3, Trash2, Search, X, Save, AlertTriangle } from 'lucide-react';
+import { Users, Shield, Plus, Edit3, Trash2, Search, X, Save, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
+import SportTableBorder from '../../shared/SportTableBorder';
 
 const POSICIONES_BASKET = [
   'Base',
@@ -20,10 +21,23 @@ const POSICIONES_VOLEY = [
 
 export default function GestionDeportiva({ usuario, setModalLoginAbierto }) {
   const [subPestana, setSubPestana] = useState('jugadores'); // 'jugadores' o 'equipos'
+
+  // Estado paginación Atletas / Jugadores
   const [jugadores, setJugadores] = useState([]);
+  const [totalJugadores, setTotalJugadores] = useState(0);
+  const [paginaJugadores, setPaginaJugadores] = useState(1);
+  const [tamanoPaginaJugadores, setTamanoPaginaJugadores] = useState(10);
+
+  // Estado paginación Clubes / Equipos
   const [equipos, setEquipos] = useState([]);
+  const [totalEquipos, setTotalEquipos] = useState(0);
+  const [paginaEquipos, setPaginaEquipos] = useState(1);
+  const [tamanoPaginaEquipos, setTamanoPaginaEquipos] = useState(10);
+
+  // Catálogos auxiliares
   const [deportes, setDeportes] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [listaEquiposModal, setListaEquiposModal] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [busqueda, setBusqueda] = useState('');
 
@@ -36,38 +50,78 @@ export default function GestionDeportiva({ usuario, setModalLoginAbierto }) {
 
   const [elementoAEliminar, setElementoAEliminar] = useState(null); // { tipo: 'jugador' | 'equipo', id, nombre }
 
-  // Cargar catálogos
-  const cargarDatos = async () => {
-    setCargando(true);
-    const [resJ, resE, resD, resC] = await Promise.all([
-      peticion('/jugadores/?page_size=100'),
-      peticion('/equipos/?page_size=100'),
+  // Cargar catálogos fijos y lista de equipos para el select de jugadores
+  const cargarCatalogos = async () => {
+    const [resD, resC, resEqModal] = await Promise.all([
       peticion('/deportes/'),
       peticion('/categorias/'),
+      peticion('/equipos/?page_size=100'),
     ]);
-    setCargando(false);
-
-    if (resJ.ok && resJ.datos) setJugadores(resJ.datos.results || resJ.datos);
-    if (resE.ok && resE.datos) setEquipos(resE.datos.results || resE.datos);
     if (resD.ok && resD.datos) setDeportes(resD.datos.results || resD.datos);
     if (resC.ok && resC.datos) setCategorias(resC.datos.results || resC.datos);
+    if (resEqModal.ok && resEqModal.datos) setListaEquiposModal(resEqModal.datos.results || resEqModal.datos);
   };
 
   useEffect(() => {
-    cargarDatos();
+    cargarCatalogos();
   }, []);
 
-  // Filtrado
-  const jugadoresFiltrados = jugadores.filter(j => 
-    j.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    j.posicion.toLowerCase().includes(busqueda.toLowerCase()) ||
-    (j.equipo_nombre && j.equipo_nombre.toLowerCase().includes(busqueda.toLowerCase()))
-  );
+  // Cargar Atletas paginados desde DRF
+  const cargarJugadores = async () => {
+    setCargando(true);
+    const params = new URLSearchParams({
+      page: paginaJugadores,
+      page_size: tamanoPaginaJugadores,
+    });
+    if (busqueda.trim()) params.append('search', busqueda.trim());
 
-  const equiposFiltrados = equipos.filter(e => 
-    e.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    e.ciudad.toLowerCase().includes(busqueda.toLowerCase())
-  );
+    const res = await peticion(`/jugadores/?${params.toString()}`);
+    setCargando(false);
+    if (res.ok && res.datos) {
+      setJugadores(res.datos.results || res.datos);
+      setTotalJugadores(res.datos.count ?? (res.datos.results || res.datos).length);
+    }
+  };
+
+  // Cargar Equipos paginados desde DRF
+  const cargarEquipos = async () => {
+    setCargando(true);
+    const params = new URLSearchParams({
+      page: paginaEquipos,
+      page_size: tamanoPaginaEquipos,
+    });
+    if (busqueda.trim()) params.append('search', busqueda.trim());
+
+    const res = await peticion(`/equipos/?${params.toString()}`);
+    setCargando(false);
+    if (res.ok && res.datos) {
+      setEquipos(res.datos.results || res.datos);
+      setTotalEquipos(res.datos.count ?? (res.datos.results || res.datos).length);
+    }
+  };
+
+  // Efecto reactivo según sub-pestaña y cambios de página/búsqueda
+  useEffect(() => {
+    if (subPestana === 'jugadores') {
+      cargarJugadores();
+    }
+  }, [subPestana, paginaJugadores, tamanoPaginaJugadores, busqueda]);
+
+  useEffect(() => {
+    if (subPestana === 'equipos') {
+      cargarEquipos();
+    }
+  }, [subPestana, paginaEquipos, tamanoPaginaEquipos, busqueda]);
+
+  // Recarga general tras guardar o eliminar
+  const recargarTodo = () => {
+    if (subPestana === 'jugadores') {
+      cargarJugadores();
+    } else {
+      cargarEquipos();
+    }
+    cargarCatalogos();
+  };
 
   // Borrado con confirmación
   const confirmarBorrado = async () => {
@@ -79,11 +133,14 @@ export default function GestionDeportiva({ usuario, setModalLoginAbierto }) {
     const res = await peticion(ruta, { method: 'DELETE' });
     if (res.ok) {
       setElementoAEliminar(null);
-      cargarDatos();
+      recargarTodo();
     } else {
       alert('Error al eliminar. Asegúrate de tener permisos de administrador.');
     }
   };
+
+  const totalPaginasJugadores = Math.ceil(totalJugadores / tamanoPaginaJugadores) || 1;
+  const totalPaginasEquipos = Math.ceil(totalEquipos / tamanoPaginaEquipos) || 1;
 
   return (
     <div className="container">
@@ -94,7 +151,7 @@ export default function GestionDeportiva({ usuario, setModalLoginAbierto }) {
               <Users size={22} color="#2563eb" /> Gestión de Plantillas Deportivas
             </h2>
             <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>
-              Registra, edita y administra atletas y clubes oficiales con posiciones dinámicas según la disciplina.
+              Registra, edita y administra atletas y clubes oficiales con paginación optimizada desde PostgreSQL.
             </p>
           </div>
 
@@ -136,16 +193,16 @@ export default function GestionDeportiva({ usuario, setModalLoginAbierto }) {
           <button
             className={`btn ${subPestana === 'jugadores' ? 'btn-primary' : 'btn-outline'}`}
             style={{ borderRadius: '6px', padding: '0.4rem 1rem' }}
-            onClick={() => { setSubPestana('jugadores'); setBusqueda(''); }}
+            onClick={() => { setSubPestana('jugadores'); setBusqueda(''); setPaginaJugadores(1); }}
           >
-            <Users size={16} /> Atletas Registrados ({jugadores.length})
+            <Users size={16} /> Atletas Registrados ({totalJugadores})
           </button>
           <button
             className={`btn ${subPestana === 'equipos' ? 'btn-primary' : 'btn-outline'}`}
             style={{ borderRadius: '6px', padding: '0.4rem 1rem' }}
-            onClick={() => { setSubPestana('equipos'); setBusqueda(''); }}
+            onClick={() => { setSubPestana('equipos'); setBusqueda(''); setPaginaEquipos(1); }}
           >
-            <Shield size={16} /> Equipos / Clubes ({equipos.length})
+            <Shield size={16} /> Equipos / Clubes ({totalEquipos})
           </button>
         </div>
 
@@ -157,163 +214,263 @@ export default function GestionDeportiva({ usuario, setModalLoginAbierto }) {
             style={{ width: '100%', paddingLeft: '2.2rem' }}
             placeholder={subPestana === 'jugadores' ? 'Buscar atleta por nombre, equipo o posición...' : 'Buscar club por nombre o ciudad...'}
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
+            onChange={(e) => {
+              setBusqueda(e.target.value);
+              if (subPestana === 'jugadores') setPaginaJugadores(1);
+              else setPaginaEquipos(1);
+            }}
           />
           <Search size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
         </div>
 
-        {/* Vista de Jugadores */}
+        {/* Vista de Jugadores con Borde Temático de Balones y Paginación */}
         {subPestana === 'jugadores' && (
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Dorsal</th>
-                  <th>Nombre Atleta</th>
-                  <th>Posición Específica</th>
-                  <th>Club / Equipo</th>
-                  <th>Disciplina / Rama</th>
-                  <th>Físico</th>
-                  {usuario.token && <th style={{ textAlign: 'right' }}>Acciones</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {cargando ? (
-                  <tr>
-                    <td colSpan={usuario.token ? 7 : 6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                      Cargando atletas...
-                    </td>
-                  </tr>
-                ) : jugadoresFiltrados.length === 0 ? (
-                  <tr>
-                    <td colSpan={usuario.token ? 7 : 6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                      No se encontraron atletas registrados.
-                    </td>
-                  </tr>
-                ) : (
-                  jugadoresFiltrados.map((j) => (
-                    <tr key={j.id}>
-                      <td style={{ fontWeight: 800, color: '#2563eb' }}>#{j.dorsal}</td>
-                      <td style={{ fontWeight: 700, color: '#0f172a' }}>{j.nombre}</td>
-                      <td>
-                        <span className="badge" style={{ background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0' }}>
-                          {j.posicion}
-                        </span>
-                      </td>
-                      <td style={{ fontWeight: 600 }}>{j.equipo_nombre}</td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '0.35rem' }}>
-                          <span className={`badge ${j.deporte_codigo === 'BASKET' ? 'badge-basket' : 'badge-voley'}`}>
-                            {j.deporte_nombre || 'Básquetbol'}
-                          </span>
-                          <span className={`badge ${j.categoria_nombre === 'Femenino' ? 'badge-fem' : 'badge-masc'}`}>
-                            {j.categoria_nombre}
-                          </span>
-                        </div>
-                      </td>
-                      <td style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                        {j.edad} años · {j.altura_cm} cm
-                      </td>
-                      {usuario.token && (
-                        <td style={{ textAlign: 'right' }}>
-                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.35rem' }}>
-                            <button
-                              className="btn btn-outline"
-                              style={{ color: '#2563eb', padding: '0.25rem 0.5rem' }}
-                              onClick={() => { setJugadorParaEditar(j); setModalJugadorAbierto(true); }}
-                              title="Editar Atleta"
-                            >
-                              <Edit3 size={15} />
-                            </button>
-                            <button
-                              className="btn btn-outline"
-                              style={{ color: '#e11d48', padding: '0.25rem 0.5rem' }}
-                              onClick={() => setElementoAEliminar({ tipo: 'jugador', id: j.id, nombre: j.nombre })}
-                              title="Eliminar con confirmación"
-                            >
-                              <Trash2 size={15} />
-                            </button>
+          <>
+            <SportTableBorder
+              titulo="Nómina Oficial de Atletas"
+              subtitulo="Plantilla de jugadores de Básquetbol y Voleibol federados con paginación optimizada"
+              badge="🏀 Atletas Federados 🏐"
+            >
+              <div className="table-responsive">
+                <table className="table sport-table-animated">
+                  <thead>
+                    <tr>
+                      <th>Dorsal</th>
+                      <th>Nombre Atleta</th>
+                      <th>Posición Específica</th>
+                      <th>Club / Equipo</th>
+                      <th>Disciplina / Rama</th>
+                      <th>Físico</th>
+                      {usuario.token && <th style={{ textAlign: 'right' }}>Acciones</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cargando ? (
+                      <tr>
+                        <td colSpan={usuario.token ? 7 : 6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.6rem' }}>
+                            <span className="ball-emoji-rotator">🏀</span>
+                            <span>Cargando atletas desde PostgreSQL...</span>
+                            <span className="ball-emoji-rotator">🏐</span>
                           </div>
                         </td>
-                      )}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                      </tr>
+                    ) : jugadores.length === 0 ? (
+                      <tr>
+                        <td colSpan={usuario.token ? 7 : 6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                          No se encontraron atletas registrados con el criterio de búsqueda.
+                        </td>
+                      </tr>
+                    ) : (
+                      jugadores.map((j) => (
+                        <tr key={j.id} className="sport-row">
+                          <td style={{ fontWeight: 800, color: '#2563eb' }}>
+                            <span className="id-badge-sport">#{j.dorsal}</span>
+                          </td>
+                          <td style={{ fontWeight: 700, color: '#0f172a' }}>{j.nombre}</td>
+                          <td>
+                            <span className="badge" style={{ background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0' }}>
+                              {j.posicion}
+                            </span>
+                          </td>
+                          <td style={{ fontWeight: 600 }}>{j.equipo_nombre}</td>
+                          <td>
+                            <div style={{ display: 'flex', gap: '0.35rem' }}>
+                              <span className={`badge ${j.deporte_codigo === 'BASKET' ? 'badge-basket' : 'badge-voley'}`}>
+                                {j.deporte_codigo === 'BASKET' ? '🏀 ' : '🏐 '} {j.deporte_nombre || 'Básquetbol'}
+                              </span>
+                              <span className={`badge ${j.categoria_nombre === 'Femenino' ? 'badge-fem' : 'badge-masc'}`}>
+                                {j.categoria_nombre}
+                              </span>
+                            </div>
+                          </td>
+                          <td style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                            {j.edad} años · {j.altura_cm} cm
+                          </td>
+                          {usuario.token && (
+                            <td style={{ textAlign: 'right' }}>
+                              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.35rem' }}>
+                                <button
+                                  className="btn btn-outline btn-action-edit"
+                                  onClick={() => { setJugadorParaEditar(j); setModalJugadorAbierto(true); }}
+                                  title="Editar Atleta"
+                                >
+                                  <Edit3 size={15} />
+                                </button>
+                                <button
+                                  className="btn btn-outline btn-action-delete"
+                                  onClick={() => setElementoAEliminar({ tipo: 'jugador', id: j.id, nombre: j.nombre })}
+                                  title="Eliminar con confirmación"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+                            </td>
+                          )}
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </SportTableBorder>
+
+            {/* Paginación de Atletas */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#64748b' }}>
+                <span>Mostrando página <strong>{paginaJugadores}</strong> de <strong>{totalPaginasJugadores}</strong> ({totalJugadores} atletas registrados)</span>
+                <span style={{ margin: '0 0.5rem' }}>|</span>
+                <label>Por página:</label>
+                <select
+                  className="form-select"
+                  style={{ minWidth: '70px', padding: '0.2rem 0.5rem' }}
+                  value={tamanoPaginaJugadores}
+                  onChange={(e) => { setTamanoPaginaJugadores(Number(e.target.value)); setPaginaJugadores(1); }}
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  className="btn btn-outline"
+                  disabled={paginaJugadores <= 1}
+                  onClick={() => setPaginaJugadores((p) => Math.max(1, p - 1))}
+                >
+                  <ChevronLeft size={16} /> Anterior
+                </button>
+                <button
+                  className="btn btn-outline"
+                  disabled={paginaJugadores >= totalPaginasJugadores}
+                  onClick={() => setPaginaJugadores((p) => p + 1)}
+                >
+                  Siguiente <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </>
         )}
 
-        {/* Vista de Equipos */}
+        {/* Vista de Equipos con Borde Temático de Balones y Paginación */}
         {subPestana === 'equipos' && (
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Siglas</th>
-                  <th>Nombre del Club</th>
-                  <th>Ciudad</th>
-                  <th>Disciplina / Rama</th>
-                  {usuario.token && <th style={{ textAlign: 'right' }}>Acciones</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {cargando ? (
-                  <tr>
-                    <td colSpan={usuario.token ? 5 : 4} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                      Cargando clubes...
-                    </td>
-                  </tr>
-                ) : equiposFiltrados.length === 0 ? (
-                  <tr>
-                    <td colSpan={usuario.token ? 5 : 4} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                      No se encontraron equipos registrados.
-                    </td>
-                  </tr>
-                ) : (
-                  equiposFiltrados.map((eq) => (
-                    <tr key={eq.id}>
-                      <td style={{ fontWeight: 800, color: '#4f46e5' }}>{eq.siglas || 'CLB'}</td>
-                      <td style={{ fontWeight: 700, color: '#0f172a' }}>{eq.nombre}</td>
-                      <td style={{ color: '#475569' }}>{eq.ciudad}</td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '0.35rem' }}>
-                          <span className={`badge ${eq.deporte_nombre?.includes('Básquet') ? 'badge-basket' : 'badge-voley'}`}>
-                            {eq.deporte_nombre}
-                          </span>
-                          <span className={`badge ${eq.categoria_nombre === 'Femenino' ? 'badge-fem' : 'badge-masc'}`}>
-                            {eq.categoria_nombre}
-                          </span>
-                        </div>
-                      </td>
-                      {usuario.token && (
-                        <td style={{ textAlign: 'right' }}>
-                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.35rem' }}>
-                            <button
-                              className="btn btn-outline"
-                              style={{ color: '#2563eb', padding: '0.25rem 0.5rem' }}
-                              onClick={() => { setEquipoParaEditar(eq); setModalEquipoAbierto(true); }}
-                              title="Editar Club"
-                            >
-                              <Edit3 size={15} />
-                            </button>
-                            <button
-                              className="btn btn-outline"
-                              style={{ color: '#e11d48', padding: '0.25rem 0.5rem' }}
-                              onClick={() => setElementoAEliminar({ tipo: 'equipo', id: eq.id, nombre: eq.nombre })}
-                              title="Eliminar con confirmación"
-                            >
-                              <Trash2 size={15} />
-                            </button>
+          <>
+            <SportTableBorder
+              titulo="Registro Oficial de Clubes y Franquicias"
+              subtitulo="Equipos participantes de básquetbol y voleibol en liga activa con paginación optimizada"
+              badge="🏆 Clubes Oficiales 🏆"
+            >
+              <div className="table-responsive">
+                <table className="table sport-table-animated">
+                  <thead>
+                    <tr>
+                      <th>Siglas</th>
+                      <th>Nombre del Club</th>
+                      <th>Ciudad Sede</th>
+                      <th>Disciplina / Rama</th>
+                      {usuario.token && <th style={{ textAlign: 'right' }}>Acciones</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cargando ? (
+                      <tr>
+                        <td colSpan={usuario.token ? 5 : 4} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.6rem' }}>
+                            <span className="ball-emoji-rotator">🏀</span>
+                            <span>Cargando clubes desde PostgreSQL...</span>
+                            <span className="ball-emoji-rotator">🏐</span>
                           </div>
                         </td>
-                      )}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                      </tr>
+                    ) : equipos.length === 0 ? (
+                      <tr>
+                        <td colSpan={usuario.token ? 5 : 4} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                          No se encontraron equipos registrados con el criterio de búsqueda.
+                        </td>
+                      </tr>
+                    ) : (
+                      equipos.map((eq) => (
+                        <tr key={eq.id} className="sport-row">
+                          <td style={{ fontWeight: 800, color: '#4f46e5' }}>
+                            <span className="id-badge-sport">{eq.siglas || 'CLB'}</span>
+                          </td>
+                          <td style={{ fontWeight: 700, color: '#0f172a' }}>{eq.nombre}</td>
+                          <td style={{ color: '#475569' }}>📍 {eq.ciudad}</td>
+                          <td>
+                            <div style={{ display: 'flex', gap: '0.35rem' }}>
+                              <span className={`badge ${eq.deporte_nombre?.includes('Básquet') ? 'badge-basket' : 'badge-voley'}`}>
+                                {eq.deporte_nombre?.includes('Básquet') ? '🏀 ' : '🏐 '} {eq.deporte_nombre}
+                              </span>
+                              <span className={`badge ${eq.categoria_nombre === 'Femenino' ? 'badge-fem' : 'badge-masc'}`}>
+                                {eq.categoria_nombre}
+                              </span>
+                            </div>
+                          </td>
+                          {usuario.token && (
+                            <td style={{ textAlign: 'right' }}>
+                              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.35rem' }}>
+                                <button
+                                  className="btn btn-outline btn-action-edit"
+                                  onClick={() => { setEquipoParaEditar(eq); setModalEquipoAbierto(true); }}
+                                  title="Editar Club"
+                                >
+                                  <Edit3 size={15} />
+                                </button>
+                                <button
+                                  className="btn btn-outline btn-action-delete"
+                                  onClick={() => setElementoAEliminar({ tipo: 'equipo', id: eq.id, nombre: eq.nombre })}
+                                  title="Eliminar con confirmación"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+                            </td>
+                          )}
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </SportTableBorder>
+
+            {/* Paginación de Clubes */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#64748b' }}>
+                <span>Mostrando página <strong>{paginaEquipos}</strong> de <strong>{totalPaginasEquipos}</strong> ({totalEquipos} clubes registrados)</span>
+                <span style={{ margin: '0 0.5rem' }}>|</span>
+                <label>Por página:</label>
+                <select
+                  className="form-select"
+                  style={{ minWidth: '70px', padding: '0.2rem 0.5rem' }}
+                  value={tamanoPaginaEquipos}
+                  onChange={(e) => { setTamanoPaginaEquipos(Number(e.target.value)); setPaginaEquipos(1); }}
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  className="btn btn-outline"
+                  disabled={paginaEquipos <= 1}
+                  onClick={() => setPaginaEquipos((p) => Math.max(1, p - 1))}
+                >
+                  <ChevronLeft size={16} /> Anterior
+                </button>
+                <button
+                  className="btn btn-outline"
+                  disabled={paginaEquipos >= totalPaginasEquipos}
+                  onClick={() => setPaginaEquipos((p) => p + 1)}
+                >
+                  Siguiente <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
 
@@ -322,11 +479,11 @@ export default function GestionDeportiva({ usuario, setModalLoginAbierto }) {
         <ModalJugadorForm
           isOpen={modalJugadorAbierto}
           onClose={() => { setModalJugadorAbierto(false); setJugadorParaEditar(null); }}
-          onGuardado={() => { cargarDatos(); }}
+          onGuardado={recargarTodo}
           jugadorParaEditar={jugadorParaEditar}
           deportes={deportes}
           categorias={categorias}
-          equipos={equipos}
+          equipos={listaEquiposModal.length > 0 ? listaEquiposModal : equipos}
         />
       )}
 
@@ -335,7 +492,7 @@ export default function GestionDeportiva({ usuario, setModalLoginAbierto }) {
         <ModalEquipoForm
           isOpen={modalEquipoAbierto}
           onClose={() => { setModalEquipoAbierto(false); setEquipoParaEditar(null); }}
-          onGuardado={() => { cargarDatos(); }}
+          onGuardado={recargarTodo}
           equipoParaEditar={equipoParaEditar}
           deportes={deportes}
           categorias={categorias}

@@ -4,6 +4,8 @@ import { BarChart3, TrendingUp, Layers, Award, Filter, RefreshCw, Shield } from 
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import JugadoresGrafica from './JugadoresGrafica';
+import SportTableBorder from '../../shared/SportTableBorder';
 
 export default function PanelEstadisticas() {
   const [estadisticas, setEstadisticas] = useState(null);
@@ -293,41 +295,44 @@ export default function PanelEstadisticas() {
         </div>
       </div>
 
-      {/* Tabla resumen de rendimiento por Posición */}
+      {/* Tabla resumen de rendimiento por Posición con Borde Temático de Balones */}
       <div className="card">
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Award size={18} color="#2563eb" /> Valoración Promedio por Posición en Cancha
-        </h3>
-        <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>
-          Basado en la tabla granular de más de 1.000 actuaciones individuales calculadas en la base de datos.
-        </p>
-
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Posición y Rama</th>
-                <th style={{ textAlign: 'center' }}>Promedio Valoración (CanchaData Score)</th>
-                <th style={{ textAlign: 'center' }}>Promedio Puntos / Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {porPosicion.map((item, idx) => (
-                <tr key={idx}>
-                  <td style={{ fontWeight: 600 }}>{item.posicion}</td>
-                  <td style={{ textAlign: 'center' }}>
-                    <span className="badge" style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #dbeafe', fontSize: '0.85rem' }}>
-                      ⭐ {item.valoracion} pts
-                    </span>
-                  </td>
-                  <td style={{ textAlign: 'center', fontWeight: 700, color: '#334155' }}>
-                    {item.puntos}
-                  </td>
+        <SportTableBorder
+          titulo="Ranking de Valoración por Posición Técnica"
+          subtitulo="CanchaData Score basado en más de 1.000 actuaciones analizadas por la base de datos"
+          badge="⭐ MVPs en Cancha ⭐"
+        >
+          <div className="table-responsive">
+            <table className="table sport-table-animated">
+              <thead>
+                <tr>
+                  <th>Posición y Rama</th>
+                  <th style={{ textAlign: 'center' }}>Promedio Valoración (CanchaData Score)</th>
+                  <th style={{ textAlign: 'center' }}>Promedio Puntos / Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {porPosicion.map((item, idx) => (
+                  <tr key={idx} className="sport-row">
+                    <td style={{ fontWeight: 600 }}>
+                      <span className="sport-indicator-ball">🎯</span> {item.posicion}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className="badge" style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #dbeafe', fontSize: '0.85rem' }}>
+                        ⭐ {item.valoracion} pts
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'center', fontWeight: 800, color: '#0f172a' }}>
+                      <span className="led-scoreboard" style={{ fontSize: '0.9rem', padding: '0.2rem 0.6rem' }}>
+                        {item.puntos}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </SportTableBorder>
       </div>
     </div>
   );

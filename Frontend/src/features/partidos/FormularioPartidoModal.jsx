@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { peticion } from '../../shared/api';
-import { PlusCircle, Edit3, X, Save } from 'lucide-react';
+import { PlusCircle, Edit3, X, Save, Zap, Flame } from 'lucide-react';
+import AnimacionChoqueBalones from './AnimacionChoqueBalones';
 
 export default function FormularioPartidoModal({
   isOpen,
@@ -23,6 +24,11 @@ export default function FormularioPartidoModal({
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState('');
   const [mostrarChoque, setMostrarChoque] = useState(false);
+
+  // Estado para la animación de choque de balones
+  const [mostrarChoque, setMostrarChoque] = useState(false);
+  const [choqueDeporteCodigo, setChoqueDeporteCodigo] = useState('BASKET');
+  const [nombresEquipos, setNombresEquipos] = useState({ local: 'Equipo Local', visitante: 'Equipo Visitante' });
 
   const esEdicion = Boolean(partidoParaEditar);
   const deporteSeleccionado = deportes.find(d => d.id === Number(deporteId));
@@ -64,6 +70,10 @@ export default function FormularioPartidoModal({
   }, [deporteId, categoriaId, esEdicion]);
 
   if (!isOpen) return null;
+
+  // Obtener información del deporte actual
+  const deporteActual = deportes.find(d => Number(d.id) === Number(deporteId));
+  const esBasket = deporteActual ? (deporteActual.codigo === 'BASKET' || deporteActual.nombre.toLowerCase().includes('basket')) : true;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,6 +123,25 @@ export default function FormularioPartidoModal({
     } else {
       setError(esEdicion ? 'Error al actualizar el partido.' : 'Error al crear el partido. Revisa permisos o campos.');
     }
+  };
+
+  // Función para probar la animación en cualquier momento
+  const handleProbarAnimacion = () => {
+    const eqLocalObj = equipos.find(eq => Number(eq.id) === Number(equipoLocalId));
+    const eqVisitObj = equipos.find(eq => Number(eq.id) === Number(equipoVisitanteId));
+
+    setChoqueDeporteCodigo(deporteActual ? deporteActual.codigo : 'BASKET');
+    setNombresEquipos({
+      local: eqLocalObj ? eqLocalObj.nombre : 'Águilas Básquet',
+      visitante: eqVisitObj ? eqVisitObj.nombre : 'Titanes Voley',
+    });
+    setMostrarChoque(true);
+  };
+
+  const finalizarAnimacion = () => {
+    setMostrarChoque(false);
+    onGuardado();
+    onClose();
   };
 
   return (
