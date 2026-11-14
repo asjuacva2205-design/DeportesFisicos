@@ -15,7 +15,6 @@ Backend/.env
 
 # Archivos estáticos generados en producción
 Backend/staticfiles/
-Frontend/dist/
 
 # Dependencias de Node
 Frontend/node_modules/

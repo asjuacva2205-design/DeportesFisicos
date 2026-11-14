@@ -181,9 +181,11 @@ frontend_dist = BASE_DIR.parent / 'Frontend' / 'dist'
 STATICFILES_DIRS = []
 if frontend_dist.exists():
     STATICFILES_DIRS.append(frontend_dist)
+    WHITENOISE_ROOT = str(frontend_dist)
 
 # Configuración de WhiteNoise para producción
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
