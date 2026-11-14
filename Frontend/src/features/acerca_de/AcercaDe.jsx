@@ -18,10 +18,11 @@ export default function AcercaDe() {
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <User size={14} /> Estudiante / Autor(a)
             </span>
-            <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginTop: '0.3rem' }}>
-              Desarrollador(a) CanchaData
+            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginTop: '0.3rem' }}>
+              Astrid Juliana Acevedo Vargas
             </div>
             <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: 600 }}>Modalidad Individual</span>
+
           </div>
 
           <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
